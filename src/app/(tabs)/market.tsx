@@ -1,59 +1,57 @@
 import { useEffect, useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { FileText, Leaf, RefreshCw, TrendingDown, TrendingUp } from "lucide-react-native";
 import { fetchMarketPrices } from "@/api/market";
 import {
   AlertBox,
-  BrandHeader,
+  BrandMark,
   Button,
   Card,
   EmptyState,
   LoadingBlock,
   ScreenScroll,
+  Skeleton,
 } from "@/components/ui";
-import { colors } from "@/theme/colors";
+import { colors, fonts, radius, spacing, typography } from "@/theme/theme";
 import type { MarketAnimal, MarketData } from "@/types";
 import { formatCurrency, formatDate } from "@/utils/format";
 
-const AnimalCard = ({
-  animal,
-  icon,
-}: {
-  animal: MarketAnimal;
-  icon: keyof typeof Ionicons.glyphMap;
-}) => (
-  <Card style={styles.card}>
-    <View style={styles.cardTop}>
-      <View style={styles.animalIcon}>
-        <Ionicons name={icon} size={22} color={colors.primary} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.animalName}>{animal.name}</Text>
-        <Text style={styles.animalSub}>Piyasa ortalama fiyatı</Text>
-        <Text style={styles.price}>
-          {formatCurrency(animal.pricePerKg.average).replace(" ₺", "")}{" "}
-          <Text style={styles.priceUnit}>₺/kg</Text>
-        </Text>
-      </View>
-      <View style={styles.trendCol}>
+const AnimalCard = ({ animal }: { animal: MarketAnimal }) => {
+  const isUp = animal.trend === "up";
+  return (
+    <Card style={styles.card}>
+      <View style={styles.cardTop}>
+        <View style={styles.animalIcon}>
+          <Leaf size={22} color={colors.primary} strokeWidth={2.1} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.animalName}>{animal.name}</Text>
+          <Text style={styles.animalSub}>Piyasa ortalama fiyatı</Text>
+          <Text style={styles.price}>
+            {Math.round(animal.pricePerKg.average).toLocaleString("tr-TR")}{" "}
+            <Text style={styles.priceUnit}>₺/kg</Text>
+          </Text>
+        </View>
         <View
-          style={[
-            styles.trendPill,
-            animal.trend === "up" ? styles.trendUp : styles.trendDown,
-          ]}
+          style={[styles.trendPill, isUp ? styles.trendUp : styles.trendDown]}
         >
+          {isUp ? (
+            <TrendingUp size={12} color={colors.success} strokeWidth={2.2} />
+          ) : (
+            <TrendingDown size={12} color={colors.error} strokeWidth={2.2} />
+          )}
           <Text style={styles.trendText}>
-            {animal.trend === "up" ? "Yukarı" : "Aşağı"} {animal.changePercent}%
+            {isUp ? "Yukarı" : "Aşağı"} {animal.changePercent}%
           </Text>
         </View>
       </View>
-    </View>
-    <Text style={styles.range}>
-      Aralık: {formatCurrency(animal.priceRange.min)} –{" "}
-      {formatCurrency(animal.priceRange.max)}
-    </Text>
-  </Card>
-);
+      <Text style={styles.range}>
+        Aralık: {formatCurrency(animal.priceRange.min)} –{" "}
+        {formatCurrency(animal.priceRange.max)}
+      </Text>
+    </Card>
+  );
+};
 
 export default function MarketScreen() {
   const [data, setData] = useState<MarketData | null>(null);
@@ -64,7 +62,6 @@ export default function MarketScreen() {
 
   useEffect(() => {
     let cancelled = false;
-
     const run = async () => {
       try {
         const response = await fetchMarketPrices();
@@ -81,7 +78,6 @@ export default function MarketScreen() {
         }
       }
     };
-
     void run();
     return () => {
       cancelled = true;
@@ -96,8 +92,11 @@ export default function MarketScreen() {
   if (loading) {
     return (
       <ScreenScroll>
-        <BrandHeader />
+        <BrandMark />
         <LoadingBlock label="Piyasa yükleniyor..." />
+        <Skeleton height={88} style={{ marginBottom: 12 }} />
+        <Skeleton height={88} style={{ marginBottom: 12 }} />
+        <Skeleton height={88} />
       </ScreenScroll>
     );
   }
@@ -108,7 +107,7 @@ export default function MarketScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Piyasa</Text>
       <Text style={styles.pageText}>
         Canlı hayvan piyasasına ilişkin güncel fiyat referansları ve trendler.
@@ -116,12 +115,11 @@ export default function MarketScreen() {
 
       <View style={styles.updateBar}>
         <Text style={styles.updateText}>
-          Son güncelleme:{" "}
-          {data ? formatDate(data.lastUpdated) : "—"}
+          Son güncelleme: {data ? formatDate(data.lastUpdated) : "—"}
         </Text>
         <Button
           label="Güncelle"
-          icon="refresh"
+          icon={RefreshCw}
           variant="sage"
           onPress={handleRefresh}
         />
@@ -131,22 +129,19 @@ export default function MarketScreen() {
 
       {!data ? (
         <EmptyState
+          icon={Leaf}
           title="Veri yok"
           description="Piyasa verileri şu an gösterilemiyor."
         />
       ) : (
         <>
-          <AnimalCard animal={data.livestock.cattle} icon="paw" />
-          <AnimalCard animal={data.livestock.sheep} icon="leaf-outline" />
-          <AnimalCard animal={data.livestock.goat} icon="nutrition-outline" />
+          <AnimalCard animal={data.livestock.cattle} />
+          <AnimalCard animal={data.livestock.sheep} />
+          <AnimalCard animal={data.livestock.goat} />
 
           <Card style={styles.notes}>
             <View style={styles.notesHeader}>
-              <Ionicons
-                name="document-text-outline"
-                size={18}
-                color={colors.primary}
-              />
+              <FileText size={18} color={colors.primary} strokeWidth={2.1} />
               <Text style={styles.notesTitle}>Piyasa Notları</Text>
             </View>
             {data.marketInsights.map((insight) => (
@@ -163,105 +158,103 @@ export default function MarketScreen() {
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
   },
   pageText: {
-    marginTop: 8,
-    color: colors.textMuted,
-    lineHeight: 21,
+    ...typography.body,
+    marginTop: spacing.sm,
+    color: colors.textSecondary,
   },
   updateBar: {
-    marginTop: 14,
-    marginBottom: 8,
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 10,
+    gap: spacing.sm,
   },
   updateText: {
     flex: 1,
-    color: colors.textMuted,
-    fontSize: 13,
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   card: {
-    marginTop: 10,
-    gap: 10,
+    marginTop: spacing.sm,
+    gap: spacing.sm,
   },
   cardTop: {
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.md,
     alignItems: "flex-start",
   },
   animalIcon: {
     width: 48,
     height: 48,
-    borderRadius: 14,
-    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
   },
   animalName: {
-    fontSize: 17,
-    fontWeight: "800",
+    ...typography.cardTitle,
     color: colors.text,
   },
   animalSub: {
+    ...typography.caption,
     marginTop: 2,
-    fontSize: 12,
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   price: {
-    marginTop: 6,
+    marginTop: spacing.sm,
+    fontFamily: fonts.extraBold,
     fontSize: 24,
-    fontWeight: "800",
     color: colors.primary,
   },
   priceUnit: {
     fontSize: 14,
-    fontWeight: "600",
-  },
-  trendCol: {
-    alignItems: "flex-end",
+    fontFamily: fonts.semibold,
   },
   trendPill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   trendUp: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.sage,
   },
   trendDown: {
-    backgroundColor: colors.dangerSoft,
+    backgroundColor: "#FCECEC",
   },
   trendText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: colors.primaryDark,
+    ...typography.caption,
+    fontFamily: fonts.bold,
+    color: colors.forest,
   },
   range: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   notes: {
-    marginTop: 12,
-    gap: 8,
+    marginTop: spacing.md,
+    gap: spacing.sm,
   },
   notesHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
   },
   notesTitle: {
-    fontWeight: "800",
+    ...typography.cardTitle,
     color: colors.text,
-    fontSize: 16,
   },
   note: {
-    color: colors.textMuted,
-    lineHeight: 20,
+    ...typography.body,
+    fontSize: 14,
+    color: colors.textSecondary,
   },
 });

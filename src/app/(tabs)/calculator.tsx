@@ -1,20 +1,34 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  ArrowRightLeft,
+  Lock,
+  LockOpen,
+  Ruler,
+  Scale,
+  Wallet,
+} from "lucide-react-native";
 import { consumeCredit } from "@/api/credits";
 import { ApiError } from "@/api/client";
 import {
   AlertBox,
-  BrandHeader,
+  BrandMark,
   Button,
   Card,
   Chip,
   Field,
+  ResultBanner,
   ScreenScroll,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme/colors";
+import {
+  colors,
+  fonts,
+  radius,
+  spacing,
+  typography,
+} from "@/theme/theme";
 import { formatCurrency, parseNumber } from "@/utils/format";
 import {
   calculateYieldRows,
@@ -27,8 +41,8 @@ export default function CalculatorScreen() {
   const [liveWeight, setLiveWeight] = useState("700");
   const [meatPrice, setMeatPrice] = useState("620");
   const [profile, setProfile] = useState<LargeCattleYieldProfile>("male");
-  const [chest, setChest] = useState("240");
-  const [length, setLength] = useState("180");
+  const [chest, setChest] = useState("");
+  const [length, setLength] = useState("");
   const [showTable, setShowTable] = useState(false);
   const [error, setError] = useState("");
   const [unlocking, setUnlocking] = useState(false);
@@ -87,7 +101,7 @@ export default function CalculatorScreen() {
 
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Manuel Hesapla</Text>
       <Text style={styles.pageText}>
         Canlı kilo ve et fiyatı girerek karkas ağırlığı, hisse ve toplam değeri
@@ -97,7 +111,7 @@ export default function CalculatorScreen() {
       <Card style={styles.formCard}>
         <Field
           label="Canlı kilo"
-          icon="bag-handle-outline"
+          icon={Scale}
           value={liveWeight}
           onChangeText={(text) => {
             setLiveWeight(text);
@@ -107,7 +121,7 @@ export default function CalculatorScreen() {
         />
         <Field
           label="Kg et fiyatı"
-          icon="cash-outline"
+          icon={Wallet}
           value={meatPrice}
           onChangeText={(text) => {
             setMeatPrice(text);
@@ -139,29 +153,30 @@ export default function CalculatorScreen() {
         <Text style={styles.label}>Ölçü ile tahmin</Text>
         <Field
           label="Göğüs çevresi (cm)"
-          icon="resize-outline"
+          icon={Ruler}
           value={chest}
           onChangeText={setChest}
           keyboardType="numeric"
+          placeholder="Opsiyonel"
         />
         <Field
           label="Gövde uzunluğu (cm)"
-          icon="swap-horizontal-outline"
+          icon={ArrowRightLeft}
           value={length}
           onChangeText={setLength}
           keyboardType="numeric"
+          placeholder="Opsiyonel"
         />
         {measurementEstimate ? (
           <Button
             label={`Tahmini ${measurementEstimate} kg uygula`}
             variant="sage"
-            icon="arrow-forward"
             onPress={() => setLiveWeight(String(measurementEstimate))}
           />
         ) : null}
       </Card>
 
-      <View style={styles.resultCard}>
+      <ResultBanner style={styles.resultCard}>
         <Text style={styles.resultLabel}>Tahmini karkas değeri</Text>
         <Text style={styles.resultValue}>{formatCurrency(totalSellPrice)}</Text>
         <View style={styles.resultGrid}>
@@ -170,14 +185,14 @@ export default function CalculatorScreen() {
           <MiniStat label="Karkas kilo" value={`${karkasWeight} kg`} />
           <MiniStat label="1/7 hisse" value={formatCurrency(sharePrice)} />
         </View>
-      </View>
+      </ResultBanner>
 
       <Card style={styles.lockCard}>
         <View style={styles.lockHeader}>
           <Text style={styles.lockTitle}>Detaylı randıman tablosu</Text>
           {!showTable ? (
             <View style={styles.lockPill}>
-              <Ionicons name="lock-closed" size={12} color={colors.primary} />
+              <Lock size={12} color={colors.primary} strokeWidth={2.2} />
               <Text style={styles.lockPillText}>Kilitli</Text>
             </View>
           ) : null}
@@ -208,7 +223,7 @@ export default function CalculatorScreen() {
             </View>
             <Button
               label="Tabloyu Aç (1 kredi)"
-              icon="lock-open-outline"
+              icon={LockOpen}
               onPress={handleUnlock}
               loading={unlocking}
             />
@@ -234,70 +249,65 @@ const MiniStat = ({ label, value }: { label: string; value: string }) => (
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
   },
   pageText: {
-    marginTop: 8,
-    color: colors.textMuted,
-    lineHeight: 21,
+    ...typography.body,
+    marginTop: spacing.sm,
+    color: colors.textSecondary,
   },
   formCard: {
-    marginTop: 16,
+    marginTop: spacing.lg,
   },
   label: {
-    marginBottom: 8,
-    marginTop: 4,
-    fontWeight: "700",
+    ...typography.label,
+    marginBottom: spacing.sm,
+    marginTop: spacing.xs,
     color: colors.text,
   },
   chipRow: {
     flexDirection: "row",
-    gap: 8,
-    marginBottom: 12,
+    gap: spacing.sm,
+    marginBottom: spacing.md,
   },
   resultCard: {
-    marginTop: 14,
-    borderRadius: 22,
-    backgroundColor: colors.resultCard,
-    padding: 18,
+    marginTop: spacing.lg,
   },
   resultLabel: {
-    color: colors.primarySoft,
-    fontWeight: "600",
+    ...typography.label,
+    color: colors.sage,
   },
   resultValue: {
-    marginTop: 8,
+    ...typography.result,
+    marginTop: spacing.sm,
     color: colors.white,
-    fontSize: 34,
-    fontWeight: "800",
   },
   resultGrid: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
   },
   miniStat: {
     width: "48%",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 12,
-    padding: 10,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    borderRadius: radius.md,
+    padding: spacing.md,
   },
   miniLabel: {
+    ...typography.caption,
     color: "#B7D7C5",
-    fontSize: 11,
   },
   miniValue: {
     marginTop: 4,
+    fontFamily: fonts.extraBold,
     color: colors.white,
-    fontWeight: "800",
   },
   lockCard: {
-    marginTop: 14,
-    gap: 12,
+    marginTop: spacing.lg,
+    gap: spacing.md,
   },
   lockHeader: {
     flexDirection: "row",
@@ -305,42 +315,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lockTitle: {
-    fontWeight: "800",
+    ...typography.cardTitle,
     color: colors.text,
-    fontSize: 16,
   },
   lockPill: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: colors.primarySoft,
-    borderRadius: 999,
-    paddingHorizontal: 10,
+    backgroundColor: colors.sage,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 4,
   },
   lockPillText: {
+    ...typography.caption,
+    fontFamily: fonts.bold,
     color: colors.primary,
-    fontWeight: "700",
-    fontSize: 11,
   },
   blurPreview: {
-    borderRadius: 14,
-    backgroundColor: colors.surfaceMuted,
-    padding: 18,
+    borderRadius: radius.lg,
+    backgroundColor: colors.softSurface,
+    padding: spacing.xl,
     alignItems: "center",
-    gap: 6,
+    gap: spacing.xs,
   },
   blurText: {
-    color: colors.textSoft,
-    fontWeight: "600",
+    ...typography.label,
+    color: colors.disabled,
   },
   creditHint: {
+    ...typography.caption,
     textAlign: "center",
-    color: colors.textMuted,
-    fontSize: 12,
+    color: colors.textSecondary,
   },
   table: {
-    gap: 8,
+    gap: spacing.sm,
   },
   tableHeader: {
     flexDirection: "row",
@@ -350,7 +359,7 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    fontWeight: "700",
+    fontFamily: fonts.bold,
     color: colors.text,
   },
 });

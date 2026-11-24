@@ -1,14 +1,17 @@
 import { useState } from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Camera,
+  FileText,
+  Images,
+  MapPin,
+  Plus,
+  Scale,
+  User,
+} from "lucide-react-native";
 import {
   analyzeImages,
   getAnalyzeErrorMessage,
@@ -16,22 +19,25 @@ import {
 import { saveHistory } from "@/api/history";
 import {
   AlertBox,
-  BrandHeader,
+  BrandMark,
   Button,
   Card,
   Chip,
   Field,
+  ResultBanner,
   ScreenScroll,
+  SuccessState,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme/colors";
+import {
+  colors,
+  fonts,
+  radius,
+  spacing,
+  typography,
+} from "@/theme/theme";
 import type { AdditionalInfo, AnalysisResult } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils/format";
-
-const categories = [
-  { id: "büyükbaş", label: "Büyükbaş", icon: "paw" as const },
-  { id: "küçükbaş", label: "Küçükbaş", icon: "rose-outline" as const },
-];
 
 export default function AnalyzeScreen() {
   const { user, setUser } = useAuth();
@@ -45,7 +51,6 @@ export default function AnalyzeScreen() {
 
   const handlePickImages = async (fromCamera: boolean) => {
     setError(null);
-
     if (fromCamera) {
       const permission = await ImagePicker.requestCameraPermissionsAsync();
       if (!permission.granted) {
@@ -62,15 +67,12 @@ export default function AnalyzeScreen() {
     }
 
     const picked = fromCamera
-      ? await ImagePicker.launchCameraAsync({
-          quality: 0.7,
-          base64: true,
-        })
+      ? await ImagePicker.launchCameraAsync({ quality: 0.7, base64: true })
       : await ImagePicker.launchImageLibraryAsync({
           quality: 0.7,
           base64: true,
           allowsMultipleSelection: true,
-          selectionLimit: 4 - images.length,
+          selectionLimit: Math.max(1, 4 - images.length),
         });
 
     if (picked.canceled) return;
@@ -88,21 +90,15 @@ export default function AnalyzeScreen() {
     setResult(null);
   };
 
-  const handleRemoveImage = (index: number) => {
-    setImages((current) => current.filter((_, i) => i !== index));
-  };
-
   const handleAnalyze = async () => {
     if (images.length === 0) {
       setError("Önce en az bir fotoğraf ekleyin.");
       return;
     }
-
     if (!user) {
       setError("Analiz için giriş yapmanız gerekiyor.");
       return;
     }
-
     if (user.remainingCredits <= 0) {
       setError("Kredi hakkınız kalmadı.");
       return;
@@ -114,11 +110,7 @@ export default function AnalyzeScreen() {
 
     const payload =
       images.length > 1
-        ? {
-            analysisType: "multiple" as const,
-            images,
-            additionalInfo,
-          }
+        ? { analysisType: "multiple" as const, images, additionalInfo }
         : {
             image: images[0],
             imageIndex: 1,
@@ -127,7 +119,6 @@ export default function AnalyzeScreen() {
           };
 
     const response = await analyzeImages(payload);
-
     if (!response.ok) {
       setError(
         getAnalyzeErrorMessage(response.errorType, response.detectedType) ||
@@ -156,11 +147,9 @@ export default function AnalyzeScreen() {
     setIsAnalyzing(false);
   };
 
-  const slots = [0, 1, 2, 3];
-
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Fotoğrafla AI Analiz</Text>
       <Text style={styles.pageText}>
         Hayvanınızın fotoğraflarını yükleyin; yapay zeka ile tür, kilo ve hisse
@@ -170,13 +159,13 @@ export default function AnalyzeScreen() {
       <View style={styles.ctaRow}>
         <Button
           label="Kamera"
-          icon="camera-outline"
+          icon={Camera}
           flex
           onPress={() => handlePickImages(true)}
         />
         <Button
           label="Galeri"
-          icon="images-outline"
+          icon={Images}
           variant="secondary"
           flex
           onPress={() => handlePickImages(false)}
@@ -184,18 +173,21 @@ export default function AnalyzeScreen() {
       </View>
 
       <Text style={styles.slotHint}>
-        En fazla 4 fotoğraf ekleyin. Farklı açılar (yan, ön, arka) doğruluğu
-        artırır.
+        En fazla 4 fotoğraf ekleyin. Farklı açılar doğruluğu artırır.
       </Text>
 
       <View style={styles.slotRow}>
-        {slots.map((slot) => {
+        {[0, 1, 2, 3].map((slot) => {
           const image = images[slot];
           return (
             <Pressable
               key={slot}
               onPress={() =>
-                image ? handleRemoveImage(slot) : handlePickImages(false)
+                image
+                  ? setImages((current) =>
+                      current.filter((_, index) => index !== slot),
+                    )
+                  : handlePickImages(false)
               }
               style={[styles.slot, image && styles.slotFilled]}
               accessibilityLabel={
@@ -208,7 +200,7 @@ export default function AnalyzeScreen() {
                 <Image source={{ uri: image }} style={styles.slotImage} />
               ) : (
                 <>
-                  <Ionicons name="add" size={22} color={colors.primaryMid} />
+                  <Plus size={20} color={colors.freshGreen} strokeWidth={2.2} />
                   <Text style={styles.slotLabel}>{slot + 1}. Fotoğraf</Text>
                 </>
               )}
@@ -218,25 +210,33 @@ export default function AnalyzeScreen() {
       </View>
 
       <View style={styles.chipRow}>
-        {categories.map((category) => (
-          <Chip
-            key={category.id}
-            label={category.label}
-            icon={category.icon}
-            selected={additionalInfo.animalCategory === category.id}
-            onPress={() =>
-              setAdditionalInfo((current) => ({
-                ...current,
-                animalCategory: category.id,
-              }))
-            }
-          />
-        ))}
+        <Chip
+          label="Büyükbaş"
+          icon={User}
+          selected={additionalInfo.animalCategory === "büyükbaş"}
+          onPress={() =>
+            setAdditionalInfo((current) => ({
+              ...current,
+              animalCategory: "büyükbaş",
+            }))
+          }
+        />
+        <Chip
+          label="Küçükbaş"
+          icon={Scale}
+          selected={additionalInfo.animalCategory === "küçükbaş"}
+          onPress={() =>
+            setAdditionalInfo((current) => ({
+              ...current,
+              animalCategory: "küçükbaş",
+            }))
+          }
+        />
       </View>
 
       <Field
         label="Tür / cins"
-        icon="paw-outline"
+        icon={User}
         value={additionalInfo.animalType || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, animalType: text }))
@@ -245,7 +245,7 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Tahmini kilo (kg)"
-        icon="bag-outline"
+        icon={Scale}
         value={additionalInfo.weight || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, weight: text }))
@@ -255,7 +255,7 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Bölge"
-        icon="location-outline"
+        icon={MapPin}
         value={additionalInfo.region || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, region: text }))
@@ -264,7 +264,7 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Not"
-        icon="document-text-outline"
+        icon={FileText}
         value={additionalInfo.specialNotes || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, specialNotes: text }))
@@ -293,7 +293,7 @@ export default function AnalyzeScreen() {
 
       <Button
         label={isAnalyzing ? "Analiz ediliyor..." : "Analizi Başlat"}
-        icon="stats-chart-outline"
+        icon={Camera}
         onPress={handleAnalyze}
         loading={isAnalyzing}
         disabled={images.length === 0 || isAnalyzing}
@@ -303,54 +303,44 @@ export default function AnalyzeScreen() {
       ) : null}
 
       {result ? (
-        <Card style={styles.resultCard}>
-          <View style={styles.successBanner}>
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color={colors.primary}
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.successTitle}>Analiz tamamlandı</Text>
-              <Text style={styles.successText}>
-                Fotoğraflarınız yapay zeka ile başarıyla analiz edildi.
-              </Text>
-            </View>
-          </View>
+        <View style={styles.resultCard}>
+          <SuccessState
+            title="Analiz tamamlandı"
+            description="Fotoğraflarınız yapay zeka ile başarıyla analiz edildi."
+          />
 
           <Text style={styles.resultAnimal}>
             Tür: {result.animalType} · {result.breed}
           </Text>
 
-          <View style={styles.metrics}>
-            <StatBlock
-              label="Canlı kilo"
-              value={`${formatNumber(result.estimatedWeight)} kg`}
-            />
-            <StatBlock
-              label="Randıman"
-              value={`%${formatNumber(result.meatYield.yieldRatios.karkasYield)}`}
-            />
-            <StatBlock
-              label="Karkas"
-              value={`${formatNumber(result.meatYield.karkasWeight)} kg`}
-            />
-          </View>
-
-          <View style={styles.valueRow}>
-            <View style={styles.valueDark}>
-              <Text style={styles.valueDarkLabel}>Tahmini karkas değeri</Text>
-              <Text style={styles.valueDarkValue}>
-                {formatCurrency(result.marketValue)}
-              </Text>
+          <ResultBanner>
+            <Text style={styles.bannerLabel}>Tahmini canlı kilo</Text>
+            <Text style={styles.bannerValue}>
+              {formatNumber(Number(result.estimatedWeight))} kg
+            </Text>
+            <View style={styles.bannerGrid}>
+              <MiniStat
+                label="Karkas değeri"
+                value={formatCurrency(Number(result.marketValue))}
+                light
+              />
+              <MiniStat
+                label="1/7 hisse"
+                value={formatCurrency(Number(result.costPerShare))}
+                light
+              />
+              <MiniStat
+                label="Karkas"
+                value={`${formatNumber(result.meatYield.karkasWeight)} kg`}
+                light
+              />
+              <MiniStat
+                label="Randıman"
+                value={`%${formatNumber(result.meatYield.yieldRatios.karkasYield)}`}
+                light
+              />
             </View>
-            <View style={styles.valueLight}>
-              <Text style={styles.valueLightLabel}>1/7 hisse</Text>
-              <Text style={styles.valueLightValue}>
-                {formatCurrency(result.costPerShare)}
-              </Text>
-            </View>
-          </View>
+          </ResultBanner>
 
           <Text style={styles.disclaimer}>
             Sonuçlar ön tahmindir. Profesyonel tartım ve veteriner kontrolü
@@ -360,7 +350,7 @@ export default function AnalyzeScreen() {
           <View style={styles.ctaRow}>
             <Button
               label="Yeni Analiz"
-              icon="camera-outline"
+              icon={Camera}
               flex
               onPress={() => {
                 setResult(null);
@@ -369,66 +359,75 @@ export default function AnalyzeScreen() {
             />
             <Button
               label="Hesabım"
-              icon="person-outline"
+              icon={User}
               variant="secondary"
               flex
               onPress={() => router.push("/account")}
             />
           </View>
-        </Card>
+        </View>
       ) : null}
     </ScreenScroll>
   );
 }
 
-const StatBlock = ({ label, value }: { label: string; value: string }) => (
-  <View style={styles.statBlock}>
-    <Text style={styles.statBlockLabel}>{label}</Text>
-    <Text style={styles.statBlockValue}>{value}</Text>
+const MiniStat = ({
+  label,
+  value,
+  light,
+}: {
+  label: string;
+  value: string;
+  light?: boolean;
+}) => (
+  <View style={[styles.statBlock, light && styles.statBlockLight]}>
+    <Text style={[styles.statBlockLabel, light && styles.statBlockLabelLight]}>
+      {label}
+    </Text>
+    <Text style={[styles.statBlockValue, light && styles.statBlockValueLight]}>
+      {value}
+    </Text>
   </View>
 );
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
-    letterSpacing: -0.4,
   },
   pageText: {
-    marginTop: 8,
-    color: colors.textMuted,
-    lineHeight: 21,
+    ...typography.body,
+    marginTop: spacing.sm,
+    color: colors.textSecondary,
   },
   ctaRow: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm,
   },
   slotHint: {
-    marginTop: 14,
-    marginBottom: 10,
-    color: colors.textMuted,
-    fontSize: 13,
-    lineHeight: 18,
+    ...typography.caption,
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
+    color: colors.textSecondary,
   },
   slotRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
   },
   slot: {
     width: "23%",
     aspectRatio: 1,
-    borderRadius: 14,
+    borderRadius: radius.md,
     borderWidth: 1.5,
     borderStyle: "dashed",
-    borderColor: colors.primaryMid,
-    backgroundColor: colors.primarySoftAlt,
+    borderColor: colors.freshGreen,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
-    padding: 4,
+    padding: spacing.xs,
   },
   slotFilled: {
     borderStyle: "solid",
@@ -440,125 +439,92 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   slotLabel: {
+    ...typography.caption,
     marginTop: 4,
     fontSize: 9,
-    fontWeight: "700",
-    color: colors.primaryMid,
+    fontFamily: fonts.bold,
+    color: colors.freshGreen,
     textAlign: "center",
   },
   chipRow: {
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   loginBanner: {
-    marginBottom: 10,
-    backgroundColor: colors.primarySoftAlt,
-    borderColor: colors.primarySoft,
-    gap: 10,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.sage,
+    borderColor: colors.sage,
+    gap: spacing.sm,
   },
   loginBannerText: {
-    color: colors.primaryDark,
-    fontWeight: "600",
-    lineHeight: 20,
+    ...typography.body,
+    fontSize: 14,
+    color: colors.forest,
   },
   creditLine: {
-    marginBottom: 10,
-    fontWeight: "700",
-    color: colors.primaryDark,
+    ...typography.label,
+    marginBottom: spacing.sm,
+    color: colors.forest,
   },
   helper: {
-    marginTop: 8,
+    ...typography.caption,
+    marginTop: spacing.sm,
     textAlign: "center",
-    color: colors.textMuted,
-    fontSize: 12,
+    color: colors.textSecondary,
   },
   resultCard: {
-    marginTop: 16,
-    gap: 12,
-  },
-  successBanner: {
-    flexDirection: "row",
-    gap: 10,
-    backgroundColor: colors.primarySoft,
-    borderRadius: 14,
-    padding: 12,
-    alignItems: "flex-start",
-  },
-  successTitle: {
-    fontWeight: "800",
-    color: colors.primaryDark,
-  },
-  successText: {
-    marginTop: 2,
-    color: colors.primaryDark,
-    fontSize: 12,
+    marginTop: spacing.lg,
+    gap: spacing.md,
   },
   resultAnimal: {
-    fontWeight: "800",
+    ...typography.cardTitle,
     color: colors.text,
-    fontSize: 16,
   },
-  metrics: {
+  bannerLabel: {
+    ...typography.label,
+    color: colors.sage,
+  },
+  bannerValue: {
+    ...typography.result,
+    color: colors.white,
+    marginTop: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  bannerGrid: {
     flexDirection: "row",
-    gap: 8,
+    flexWrap: "wrap",
+    gap: spacing.sm,
   },
   statBlock: {
-    flex: 1,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 12,
-    padding: 10,
+    flexGrow: 1,
+    flexBasis: "45%",
+    backgroundColor: colors.softSurface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  statBlockLight: {
+    backgroundColor: "rgba(255,255,255,0.12)",
   },
   statBlockLabel: {
-    fontSize: 11,
-    color: colors.textMuted,
-    fontWeight: "600",
+    ...typography.caption,
+    color: colors.textSecondary,
+  },
+  statBlockLabelLight: {
+    color: colors.sage,
   },
   statBlockValue: {
     marginTop: 4,
-    fontWeight: "800",
+    fontFamily: fonts.extraBold,
+    fontSize: 16,
     color: colors.text,
   },
-  valueRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  valueDark: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: 14,
-    padding: 12,
-  },
-  valueDarkLabel: {
-    color: colors.primarySoft,
-    fontSize: 12,
-  },
-  valueDarkValue: {
-    marginTop: 6,
+  statBlockValueLight: {
     color: colors.white,
-    fontWeight: "800",
-    fontSize: 18,
-  },
-  valueLight: {
-    flex: 1,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 14,
-    padding: 12,
-  },
-  valueLightLabel: {
-    color: colors.textMuted,
-    fontSize: 12,
-  },
-  valueLightValue: {
-    marginTop: 6,
-    color: colors.primary,
-    fontWeight: "800",
-    fontSize: 18,
   },
   disclaimer: {
-    fontSize: 12,
-    color: colors.textMuted,
-    lineHeight: 17,
+    ...typography.caption,
+    color: colors.textSecondary,
   },
 });

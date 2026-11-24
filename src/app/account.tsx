@@ -1,20 +1,29 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Camera,
+  HelpCircle,
+  Layers,
+  LogOut,
+  Plus,
+  Tag,
+  User,
+} from "lucide-react-native";
 import { fetchHistory } from "@/api/history";
 import {
   AlertBox,
-  BrandHeader,
+  BrandMark,
   Button,
   Card,
   EmptyState,
   LoadingBlock,
   MenuRow,
+  ResultBanner,
   ScreenScroll,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme/colors";
+import { colors, fonts, radius, spacing, typography } from "@/theme/theme";
 import type { HistoryAnalysis } from "@/types";
 import { formatCurrency, formatDate } from "@/utils/format";
 
@@ -31,7 +40,6 @@ export default function AccountScreen() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-
     const run = async () => {
       setHistoryLoading(true);
       try {
@@ -47,7 +55,6 @@ export default function AccountScreen() {
         if (!cancelled) setHistoryLoading(false);
       }
     };
-
     void run();
     return () => {
       cancelled = true;
@@ -64,35 +71,31 @@ export default function AccountScreen() {
 
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Hesabım</Text>
 
       <Card style={styles.profileCard}>
         <View style={styles.profileRow}>
           <View style={styles.avatar}>
-            <Ionicons name="person" size={22} color={colors.primary} />
+            <User size={22} color={colors.primary} strokeWidth={2.1} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.name}>
               {user.name} {user.surname}
             </Text>
             <Text style={styles.email}>{user.email}</Text>
-            <View style={styles.badge}>
-              <Ionicons name="diamond-outline" size={12} color="#8A6A00" />
-              <Text style={styles.badgeText}>Üye</Text>
-            </View>
           </View>
         </View>
 
         <View style={styles.creditRow}>
-          <View style={styles.creditBox}>
-            <Ionicons name="layers-outline" size={18} color={colors.white} />
+          <ResultBanner style={styles.creditBox}>
+            <Layers size={18} color={colors.sage} strokeWidth={2.1} />
             <Text style={styles.creditLabel}>Kalan kredi</Text>
             <Text style={styles.creditValue}>{user.remainingCredits}</Text>
-          </View>
+          </ResultBanner>
           <Button
             label="Kredi Satın Al"
-            icon="add"
+            icon={Plus}
             variant="secondary"
             flex
             onPress={() => router.push("/pricing")}
@@ -102,25 +105,19 @@ export default function AccountScreen() {
 
       <Card style={styles.menuCard}>
         <MenuRow
-          icon="person-outline"
-          title="Profil Bilgileri"
-          subtitle="Ad, e-posta ve üyelik bilgileri"
-          onPress={() => {}}
-        />
-        <MenuRow
-          icon="pricetags-outline"
+          icon={Tag}
           title="Paketler"
           subtitle="Kredi paketlerini incele ve satın al"
           onPress={() => router.push("/pricing")}
         />
         <MenuRow
-          icon="help-circle-outline"
+          icon={HelpCircle}
           title="Destek"
           subtitle="Sorularınız için bize ulaşın"
           onPress={() => router.push("/more")}
         />
         <MenuRow
-          icon="log-out-outline"
+          icon={LogOut}
           title="Çıkış Yap"
           subtitle="Hesabınızdan güvenli çıkış"
           danger
@@ -141,6 +138,7 @@ export default function AccountScreen() {
         <LoadingBlock label="Geçmiş yükleniyor..." />
       ) : analyses.length === 0 ? (
         <EmptyState
+          icon={Camera}
           title="Henüz analiz yok"
           description="İlk fotoğraf analizinizi yaparak geçmişinizi oluşturun."
         />
@@ -154,7 +152,7 @@ export default function AccountScreen() {
           return (
             <Card key={item.id} style={styles.historyCard}>
               <View style={styles.historyIcon}>
-                <Ionicons name="paw" size={18} color={colors.primary} />
+                <Camera size={18} color={colors.primary} strokeWidth={2.1} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.historyAnimal}>
@@ -178,7 +176,7 @@ export default function AccountScreen() {
 
       <Button
         label="Yeni Analiz"
-        icon="camera-outline"
+        icon={Camera}
         onPress={() => router.push("/analyze")}
       />
     </ScreenScroll>
@@ -187,121 +185,101 @@ export default function AccountScreen() {
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
   },
   profileCard: {
-    marginTop: 14,
-    gap: 14,
+    marginTop: spacing.lg,
+    gap: spacing.lg,
   },
   profileRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.md,
     alignItems: "center",
   },
   avatar: {
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
   },
   name: {
-    fontWeight: "800",
+    fontFamily: fonts.extraBold,
     fontSize: 18,
     color: colors.text,
   },
   email: {
+    ...typography.caption,
     marginTop: 2,
-    color: colors.textMuted,
-    fontSize: 13,
-  },
-  badge: {
-    marginTop: 6,
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: colors.goldSoft,
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  badgeText: {
-    color: "#8A6A00",
-    fontWeight: "700",
-    fontSize: 11,
+    color: colors.textSecondary,
   },
   creditRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm,
     alignItems: "center",
   },
   creditBox: {
     flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: 16,
-    padding: 14,
+    padding: spacing.md,
     gap: 4,
   },
   creditLabel: {
-    color: colors.primarySoft,
-    fontSize: 12,
+    ...typography.caption,
+    color: colors.sage,
   },
   creditValue: {
-    color: colors.white,
+    fontFamily: fonts.extraBold,
     fontSize: 28,
-    fontWeight: "800",
+    color: colors.white,
   },
   menuCard: {
-    marginTop: 14,
+    marginTop: spacing.lg,
   },
   historyHeader: {
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: spacing.xxl,
+    marginBottom: spacing.sm,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   historyTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...typography.section,
     color: colors.primary,
   },
   historyCount: {
-    color: colors.textMuted,
-    fontWeight: "600",
+    ...typography.caption,
+    fontFamily: fonts.semibold,
+    color: colors.textSecondary,
   },
   historyCard: {
-    marginBottom: 10,
+    marginBottom: spacing.sm,
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.md,
     alignItems: "center",
   },
   historyIcon: {
     width: 42,
     height: 42,
-    borderRadius: 12,
-    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
   },
   historyAnimal: {
-    fontWeight: "800",
+    fontFamily: fonts.bold,
     color: colors.text,
   },
   historyMeta: {
+    ...typography.caption,
     marginTop: 2,
-    color: colors.textMuted,
-    fontSize: 12,
+    color: colors.textSecondary,
   },
   historyValue: {
+    ...typography.label,
     marginTop: 4,
-    color: colors.primaryDark,
-    fontWeight: "700",
-    fontSize: 13,
+    color: colors.forest,
   },
 });

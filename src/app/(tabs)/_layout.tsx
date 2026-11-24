@@ -1,10 +1,16 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  BarChart3,
+  Calculator,
+  Camera,
+  Ellipsis,
+  Home,
+} from "lucide-react-native";
 import type { ColorValue } from "react-native";
-import { colors } from "@/theme/colors";
+import { colors, dimensions, fonts } from "@/theme/theme";
 
-const toIconColor = (color: ColorValue) =>
-  (color as string | null) ?? colors.tabInactive;
+const toColor = (color: ColorValue) =>
+  (color as string | null) ?? colors.disabled;
 
 export default function TabsLayout() {
   return (
@@ -12,17 +18,17 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.tabInactive,
+        tabBarInactiveTintColor: colors.disabled,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.borderSoft,
-          height: 64,
-          paddingTop: 6,
-          paddingBottom: 8,
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+          height: dimensions.tabBar,
+          paddingTop: 8,
+          paddingBottom: 10,
         },
         tabBarLabelStyle: {
+          fontFamily: fonts.semibold,
           fontSize: 11,
-          fontWeight: "700",
         },
       }}
     >
@@ -31,11 +37,7 @@ export default function TabsLayout() {
         options={{
           title: "Ana Sayfa",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="home-outline"
-              size={size}
-              color={toIconColor(color)}
-            />
+            <Home size={size} color={toColor(color)} strokeWidth={2.1} />
           ),
         }}
       />
@@ -43,12 +45,8 @@ export default function TabsLayout() {
         name="analyze"
         options={{
           title: "Analiz",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "camera" : "camera-outline"}
-              size={size}
-              color={toIconColor(color)}
-            />
+          tabBarIcon: ({ color, size }) => (
+            <Camera size={size} color={toColor(color)} strokeWidth={2.1} />
           ),
         }}
       />
@@ -57,11 +55,7 @@ export default function TabsLayout() {
         options={{
           title: "Hesapla",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="calculator-outline"
-              size={size}
-              color={toIconColor(color)}
-            />
+            <Calculator size={size} color={toColor(color)} strokeWidth={2.1} />
           ),
         }}
       />
@@ -70,11 +64,7 @@ export default function TabsLayout() {
         options={{
           title: "Piyasa",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="bar-chart-outline"
-              size={size}
-              color={toIconColor(color)}
-            />
+            <BarChart3 size={size} color={toColor(color)} strokeWidth={2.1} />
           ),
         }}
       />
@@ -83,11 +73,7 @@ export default function TabsLayout() {
         options={{
           title: "Daha Fazla",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="ellipsis-horizontal"
-              size={size}
-              color={toIconColor(color)}
-            />
+            <Ellipsis size={size} color={toColor(color)} strokeWidth={2.1} />
           ),
         }}
       />

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Camera, Gift, Grid2X2, Layers, ShoppingCart, Sparkles } from "lucide-react-native";
 import { ApiError } from "@/api/client";
 import { createShopierPayment, openShopierCheckout } from "@/api/payments";
 import {
   AlertBox,
-  BrandHeader,
+  BrandMark,
   Button,
   Card,
   ScreenScroll,
@@ -16,7 +16,7 @@ import {
   type CreditPackageId,
 } from "@/config/creditPackages";
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme/colors";
+import { colors, fonts, radius, spacing, typography } from "@/theme/theme";
 
 export default function PricingScreen() {
   const { user } = useAuth();
@@ -59,7 +59,7 @@ export default function PricingScreen() {
 
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Kredi Paketleri</Text>
       <Text style={styles.pageText}>
         Yapay zeka analizleri ve detaylı tablolar için kredi kullanın.
@@ -76,7 +76,7 @@ export default function PricingScreen() {
 
       <Card style={styles.welcome}>
         <View style={styles.welcomeRow}>
-          <Ionicons name="gift-outline" size={22} color={colors.primary} />
+          <Gift size={22} color={colors.primary} strokeWidth={2.1} />
           <View style={{ flex: 1 }}>
             <Text style={styles.welcomeTitle}>Hoş geldin</Text>
             <Text style={styles.welcomeText}>
@@ -93,21 +93,17 @@ export default function PricingScreen() {
         >
           {pkg.badge ? (
             <View style={styles.badge}>
-              <Ionicons name="diamond" size={12} color={colors.white} />
+              <Sparkles size={12} color={colors.white} strokeWidth={2.2} />
               <Text style={styles.badgeText}>Önerilen</Text>
             </View>
           ) : null}
           <View style={styles.packageTop}>
             <View style={styles.packageIcon}>
-              <Ionicons
-                name={
-                  pkg.id === "standard"
-                    ? "diamond-outline"
-                    : "layers-outline"
-                }
-                size={20}
-                color={colors.primary}
-              />
+              {pkg.id === "standard" ? (
+                <Sparkles size={20} color={colors.primary} strokeWidth={2.1} />
+              ) : (
+                <Layers size={20} color={colors.primary} strokeWidth={2.1} />
+              )}
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.packageName}>{pkg.name}</Text>
@@ -133,7 +129,7 @@ export default function PricingScreen() {
                   ? "Yönlendiriliyor..."
                   : "Satın Al"
             }
-            icon="cart-outline"
+            icon={ShoppingCart}
             onPress={() => handlePurchase(pkg.id)}
             loading={purchasingId === pkg.id}
             disabled={purchasingId !== null}
@@ -143,12 +139,12 @@ export default function PricingScreen() {
 
       <View style={styles.usageRow}>
         <Card style={styles.usageCard}>
-          <Ionicons name="camera-outline" size={18} color={colors.primary} />
+          <Camera size={18} color={colors.primary} strokeWidth={2.1} />
           <Text style={styles.usageTitle}>1 analiz = 1 kredi</Text>
           <Text style={styles.usageText}>Fotoğrafla AI analizi</Text>
         </Card>
         <Card style={styles.usageCard}>
-          <Ionicons name="grid-outline" size={18} color={colors.primary} />
+          <Grid2X2 size={18} color={colors.primary} strokeWidth={2.1} />
           <Text style={styles.usageTitle}>Detaylı tablo = 1 kredi</Text>
           <Text style={styles.usageText}>Randıman senaryoları</Text>
         </Card>
@@ -163,47 +159,48 @@ export default function PricingScreen() {
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
   },
   pageText: {
-    marginTop: 8,
-    color: colors.textMuted,
-    lineHeight: 21,
+    ...typography.body,
+    marginTop: spacing.sm,
+    color: colors.textSecondary,
   },
   credit: {
-    marginTop: 10,
-    fontWeight: "700",
-    color: colors.primaryDark,
+    ...typography.label,
+    marginTop: spacing.sm,
+    color: colors.forest,
   },
   welcome: {
-    marginTop: 14,
-    backgroundColor: colors.primarySoftAlt,
-    borderColor: colors.primarySoft,
+    marginTop: spacing.lg,
+    backgroundColor: colors.sage,
+    borderColor: colors.sage,
   },
   welcomeRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.md,
     alignItems: "center",
   },
   welcomeTitle: {
-    fontWeight: "800",
-    color: colors.primaryDark,
+    fontFamily: fonts.bold,
+    color: colors.forest,
   },
   welcomeText: {
+    ...typography.body,
+    fontSize: 14,
     marginTop: 2,
-    color: colors.primaryDark,
+    color: colors.forest,
   },
   packageCard: {
-    marginTop: 12,
-    gap: 8,
+    marginTop: spacing.md,
+    gap: spacing.sm,
   },
   featured: {
     borderColor: colors.primary,
     borderWidth: 1.5,
-    backgroundColor: "#F4FAF6",
+    backgroundColor: "#F5FAF6",
   },
   badge: {
     alignSelf: "flex-start",
@@ -211,75 +208,75 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
     backgroundColor: colors.primary,
-    borderRadius: 999,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 4,
   },
   badgeText: {
+    ...typography.caption,
+    fontFamily: fonts.bold,
     color: colors.white,
-    fontWeight: "700",
-    fontSize: 11,
   },
   packageTop: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.sm,
   },
   packageIcon: {
     width: 40,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
   },
   packageName: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...typography.cardTitle,
     color: colors.text,
   },
   credits: {
-    color: colors.primaryDark,
-    fontWeight: "700",
+    ...typography.label,
+    color: colors.forest,
   },
   price: {
+    fontFamily: fonts.extraBold,
     fontSize: 24,
-    fontWeight: "800",
     color: colors.primary,
   },
   unit: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   features: {
     gap: 4,
   },
   feature: {
-    color: colors.textMuted,
-    lineHeight: 18,
+    ...typography.body,
+    fontSize: 14,
+    color: colors.textSecondary,
   },
   usageRow: {
-    marginTop: 14,
+    marginTop: spacing.lg,
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm,
   },
   usageCard: {
     flex: 1,
-    gap: 6,
+    gap: spacing.xs,
   },
   usageTitle: {
-    fontWeight: "800",
-    color: colors.text,
+    fontFamily: fonts.bold,
     fontSize: 13,
+    color: colors.text,
   },
   usageText: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   secure: {
-    marginTop: 14,
+    ...typography.caption,
+    marginTop: spacing.lg,
     textAlign: "center",
-    color: colors.textMuted,
-    fontSize: 12,
+    color: colors.textSecondary,
   },
 });

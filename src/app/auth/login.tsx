@@ -1,36 +1,38 @@
 import { useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Link, router } from "expo-router";
+import { LogIn } from "lucide-react-native";
 import {
   AlertBox,
-  BrandHeader,
+  BrandMark,
   Button,
-  Field,
+  Card,
   ScreenScroll,
+  TextField,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme/colors";
+import { colors, fonts, spacing, typography } from "@/theme/theme";
 
 export default function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    setError("");
     if (!email.trim() || !password) {
       setError("E-posta ve şifre gerekli.");
       return;
     }
 
-    setSubmitting(true);
+    setLoading(true);
+    setError("");
     const result = await login(email.trim(), password);
-    setSubmitting(false);
+    setLoading(false);
 
     if (!result.success) {
-      setError(result.error ?? "Giriş başarısız");
+      setError(result.error ?? "Giriş yapılamadı. Bilgilerinizi kontrol edin.");
       return;
     }
 
@@ -39,71 +41,77 @@ export default function LoginScreen() {
 
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Giriş Yap</Text>
       <Text style={styles.pageText}>
-        Web hesabınızla aynı e-posta ve şifreyi kullanın.
+        Hesabınıza giriş yaparak analizlerinize ve kredilerinize erişin.
       </Text>
 
-      {error ? <AlertBox message={error} /> : null}
+      <Card style={styles.card}>
+        {error ? <AlertBox message={error} /> : null}
+        <TextField
+          label="E-posta"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          autoComplete="email"
+          placeholder="ornek@mail.com"
+        />
+        <TextField
+          label="Şifre"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoComplete="password"
+          placeholder="••••••••"
+        />
+        <Button
+          label="Giriş Yap"
+          icon={LogIn}
+          onPress={handleSubmit}
+          loading={loading}
+        />
+      </Card>
 
-      <Field
-        label="E-posta"
-        icon="mail-outline"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        autoComplete="email"
-        placeholder="ornek@email.com"
-      />
-      <Field
-        label="Şifre"
-        icon="lock-closed-outline"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoComplete="password"
-        placeholder="••••••••"
-      />
-
-      <Button
-        label="Giriş Yap"
-        icon="log-in-outline"
-        onPress={handleSubmit}
-        loading={submitting}
-      />
-
-      <Text style={styles.footer}>
-        Hesabınız yok mu?{" "}
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Hesabınız yok mu?</Text>
         <Link href="/auth/register" style={styles.link}>
-          Kayıt olun
+          Kayıt Ol
         </Link>
-      </Text>
+      </View>
     </ScreenScroll>
   );
 }
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
   },
   pageText: {
-    marginTop: 8,
-    marginBottom: 14,
-    color: colors.textMuted,
-    lineHeight: 21,
+    ...typography.body,
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
+    color: colors.textSecondary,
+  },
+  card: {
+    gap: spacing.md,
   },
   footer: {
-    marginTop: 18,
-    textAlign: "center",
-    color: colors.textMuted,
+    marginTop: spacing.xl,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: spacing.xs,
+  },
+  footerText: {
+    ...typography.body,
+    color: colors.textSecondary,
   },
   link: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
     color: colors.primary,
-    fontWeight: "700",
   },
 });

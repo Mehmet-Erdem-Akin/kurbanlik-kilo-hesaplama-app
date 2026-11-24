@@ -1,7 +1,8 @@
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
+import { Globe, LogIn, LogOut, Mail, Tag, UserPlus } from "lucide-react-native";
 import {
-  BrandHeader,
+  BrandMark,
   Button,
   Card,
   MenuRow,
@@ -9,14 +10,14 @@ import {
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
 import { WEB_SITE_URL } from "@/config/env";
-import { colors } from "@/theme/colors";
+import { colors, fonts, spacing, typography } from "@/theme/theme";
 
 export default function MoreScreen() {
   const { user, loading, logout } = useAuth();
 
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
       <Text style={styles.pageTitle}>Daha Fazla</Text>
       <Text style={styles.pageText}>
         Hesap, paketler ve destek bağlantıları.
@@ -37,12 +38,11 @@ export default function MoreScreen() {
             <View style={styles.actions}>
               <Button
                 label="Hesabım"
-                icon="person-outline"
                 onPress={() => router.push("/account")}
               />
               <Button
                 label="Paketler"
-                icon="cart-outline"
+                icon={Tag}
                 variant="secondary"
                 onPress={() => router.push("/pricing")}
               />
@@ -52,18 +52,18 @@ export default function MoreScreen() {
           <View style={styles.actions}>
             <Button
               label="Giriş Yap"
-              icon="log-in-outline"
+              icon={LogIn}
               onPress={() => router.push("/auth/login")}
             />
             <Button
               label="Kayıt Ol"
-              icon="person-add-outline"
+              icon={UserPlus}
               variant="secondary"
               onPress={() => router.push("/auth/register")}
             />
             <Button
               label="Paketler"
-              icon="pricetag-outline"
+              icon={Tag}
               variant="ghost"
               onPress={() => router.push("/pricing")}
             />
@@ -73,13 +73,13 @@ export default function MoreScreen() {
 
       <Card style={styles.card}>
         <MenuRow
-          icon="globe-outline"
+          icon={Globe}
           title="Web sitesini aç"
           subtitle="kurbanlikkilohesaplama.com"
           onPress={() => Linking.openURL(WEB_SITE_URL)}
         />
         <MenuRow
-          icon="mail-outline"
+          icon={Mail}
           title="Destek"
           subtitle="Sorularınız için bize yazın"
           onPress={() =>
@@ -88,7 +88,7 @@ export default function MoreScreen() {
         />
         {user ? (
           <MenuRow
-            icon="log-out-outline"
+            icon={LogOut}
             title="Çıkış Yap"
             subtitle="Hesabınızdan güvenli çıkış"
             danger
@@ -104,36 +104,36 @@ export default function MoreScreen() {
 
 const styles = StyleSheet.create({
   pageTitle: {
-    marginTop: 16,
-    fontSize: 28,
-    fontWeight: "800",
+    ...typography.pageTitle,
+    marginTop: spacing.lg,
     color: colors.primary,
   },
   pageText: {
-    marginTop: 8,
-    color: colors.textMuted,
-    lineHeight: 21,
+    ...typography.body,
+    marginTop: spacing.sm,
+    color: colors.textSecondary,
   },
   card: {
-    marginTop: 16,
-    gap: 4,
+    marginTop: spacing.lg,
+    gap: spacing.xs,
   },
   name: {
+    fontFamily: fonts.extraBold,
     fontSize: 20,
-    fontWeight: "800",
     color: colors.text,
   },
   muted: {
-    color: colors.textMuted,
+    ...typography.body,
+    color: colors.textSecondary,
   },
   credits: {
-    marginTop: 6,
-    marginBottom: 8,
-    fontWeight: "700",
-    color: colors.primaryDark,
+    ...typography.label,
+    marginTop: spacing.xs,
+    marginBottom: spacing.sm,
+    color: colors.forest,
   },
   actions: {
-    marginTop: 8,
-    gap: 10,
+    marginTop: spacing.sm,
+    gap: spacing.sm,
   },
 });

@@ -18,7 +18,7 @@
     "android": {
       "package": "com.kurbanlikkilo.app",
       "adaptiveIcon": {
-        "backgroundColor": "#ECFDF5",
+        "backgroundColor": "#F7F3EA",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -41,7 +41,7 @@
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#F7F4EF"
+          "backgroundColor": "#F7F3EA"
         }
       ],
       "expo-secure-store",
@@ -52,7 +52,8 @@
           "photosPermission": "Analiz için galeriden fotoğraf seçmek gerekir.",
           "cameraPermission": "Kurbanlık hayvan fotoğrafı çekmek için kamera erişimi gerekir."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

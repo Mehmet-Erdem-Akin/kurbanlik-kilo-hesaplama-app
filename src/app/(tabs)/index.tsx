@@ -1,22 +1,38 @@
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import {
-  BrandHeader,
+  BarChart3,
+  Calculator,
+  Camera,
+  Leaf,
+  ShieldCheck,
+  Zap,
+} from "lucide-react-native";
+import {
+  BrandMark,
   Button,
   Card,
   IconTile,
   ScreenScroll,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme/colors";
+import {
+  colors,
+  fonts,
+  radius,
+  shadows,
+  spacing,
+  typography,
+} from "@/theme/theme";
 
 export default function HomeScreen() {
   const { user, loading } = useAuth();
 
   return (
     <ScreenScroll>
-      <BrandHeader />
+      <BrandMark />
 
       <View style={styles.hero}>
         <View style={styles.heroCopy}>
@@ -26,21 +42,31 @@ export default function HomeScreen() {
             ve hisse maliyetini hesaplayın.
           </Text>
         </View>
-        <View style={styles.heroBadge}>
-          <Ionicons name="leaf" size={28} color={colors.primary} />
+        <View style={styles.heroMedia}>
+          <Image
+            source={require("../../../assets/images/heroes/cow-hero.jpg")}
+            style={styles.heroImage}
+            contentFit="cover"
+            transition={200}
+            accessibilityLabel="Kurbanlık büyükbaş görseli"
+          />
+          <LinearGradient
+            colors={["rgba(247,243,234,0)", "rgba(247,243,234,0.92)"]}
+            style={styles.heroFade}
+          />
         </View>
       </View>
 
       <View style={styles.ctaRow}>
         <Button
           label="Analiz Başlat"
-          icon="camera-outline"
+          icon={Camera}
           flex
           onPress={() => router.push("/analyze")}
         />
         <Button
           label="Manuel Hesapla"
-          icon="calculator-outline"
+          icon={Calculator}
           variant="secondary"
           flex
           onPress={() => router.push("/calculator")}
@@ -49,30 +75,28 @@ export default function HomeScreen() {
 
       <Card style={styles.guestCard}>
         {!loading && user ? (
-          <>
-            <View style={styles.guestRow}>
-              <View style={styles.avatar}>
-                <Ionicons name="person" size={18} color={colors.primary} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.guestTitle}>
-                  {user.name} {user.surname}
-                </Text>
-                <Text style={styles.guestText}>
-                  Kalan kredi: {user.remainingCredits}
-                </Text>
-              </View>
-              <Button
-                label="Hesabım"
-                variant="sage"
-                onPress={() => router.push("/account")}
-              />
+          <View style={styles.guestRow}>
+            <View style={styles.avatar}>
+              <Leaf size={18} color={colors.primary} strokeWidth={2.2} />
             </View>
-          </>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.guestTitle}>
+                {user.name} {user.surname}
+              </Text>
+              <Text style={styles.guestText}>
+                Kalan kredi: {user.remainingCredits}
+              </Text>
+            </View>
+            <Button
+              label="Hesabım"
+              variant="sage"
+              onPress={() => router.push("/account")}
+            />
+          </View>
         ) : (
           <View style={styles.guestRow}>
             <View style={styles.avatar}>
-              <Ionicons name="person-outline" size={18} color={colors.primary} />
+              <Leaf size={18} color={colors.primary} strokeWidth={2.2} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.guestTitle}>Misafir kullanıcı</Text>
@@ -107,19 +131,19 @@ export default function HomeScreen() {
       <Text style={styles.sectionTitle}>Ana hizmetler</Text>
       <View style={styles.featureRow}>
         <IconTile
-          icon="camera-outline"
+          icon={Camera}
           title="AI Analiz"
           text="Fotoğrafla kilo ve hisse tahmini"
           onPress={() => router.push("/analyze")}
         />
         <IconTile
-          icon="calculator-outline"
+          icon={Calculator}
           title="Manuel"
           text="Canlı kilo ile anlık hesap"
           onPress={() => router.push("/calculator")}
         />
         <IconTile
-          icon="bar-chart-outline"
+          icon={BarChart3}
           title="Piyasa"
           text="Güncel fiyat referansları"
           onPress={() => router.push("/market")}
@@ -130,24 +154,24 @@ export default function HomeScreen() {
       <View style={styles.whyRow}>
         {[
           {
-            icon: "flash-outline" as const,
+            icon: Zap,
             title: "Hızlı sonuç",
             text: "Saniyeler içinde tahmin",
           },
           {
-            icon: "layers-outline" as const,
+            icon: Leaf,
             title: "Karkas & hisse",
             text: "Canlı kilodan randıman",
           },
           {
-            icon: "shield-checkmark-outline" as const,
+            icon: ShieldCheck,
             title: "Güvenilir rehber",
             text: "Güncel referanslarla",
           },
         ].map((item) => (
           <Card key={item.title} style={styles.whyCard}>
             <View style={styles.whyIcon}>
-              <Ionicons name={item.icon} size={18} color={colors.primary} />
+              <item.icon size={18} color={colors.primary} strokeWidth={2.1} />
             </View>
             <Text style={styles.whyTitle}>{item.title}</Text>
             <Text style={styles.whyText}>{item.text}</Text>
@@ -160,124 +184,121 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   hero: {
-    marginTop: 18,
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
+    marginTop: spacing.xl,
+    gap: spacing.md,
   },
   heroCopy: {
-    flex: 1,
+    gap: spacing.sm,
   },
   heroTitle: {
-    fontSize: 30,
-    fontWeight: "800",
+    ...typography.hero,
     color: colors.primary,
-    letterSpacing: -0.6,
-    lineHeight: 36,
   },
   heroText: {
-    marginTop: 10,
-    color: colors.textMuted,
-    lineHeight: 21,
-    fontSize: 14,
+    ...typography.body,
+    color: colors.textSecondary,
   },
-  heroBadge: {
-    width: 72,
-    height: 72,
-    borderRadius: 22,
-    backgroundColor: colors.primarySoft,
-    alignItems: "center",
-    justifyContent: "center",
+  heroMedia: {
+    height: 160,
+    borderRadius: radius.xl,
+    overflow: "hidden",
+    ...shadows.soft,
+  },
+  heroImage: {
+    width: "100%",
+    height: "100%",
+  },
+  heroFade: {
+    ...StyleSheet.absoluteFill,
   },
   ctaRow: {
-    marginTop: 18,
+    marginTop: spacing.xl,
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm,
   },
   guestCard: {
-    marginTop: 14,
+    marginTop: spacing.lg,
   },
   guestRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.md,
   },
   avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.primarySoft,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
   },
   guestTitle: {
-    fontWeight: "800",
+    fontFamily: fonts.bold,
+    fontSize: 15,
     color: colors.text,
   },
   guestText: {
+    ...typography.caption,
     marginTop: 2,
-    fontSize: 12,
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   guestActions: {
-    gap: 4,
+    gap: spacing.xs,
     alignItems: "flex-end",
   },
   trustBar: {
-    marginTop: 12,
-    borderRadius: 14,
-    backgroundColor: colors.primarySoftAlt,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    marginTop: spacing.md,
+    borderRadius: radius.lg,
+    backgroundColor: colors.sage,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 6,
+    gap: spacing.xs,
   },
   trustItem: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.primaryDark,
+    ...typography.caption,
+    fontFamily: fonts.semibold,
+    color: colors.forest,
   },
   trustDot: {
-    color: colors.primaryMid,
+    color: colors.freshGreen,
   },
   sectionTitle: {
-    marginTop: 22,
-    marginBottom: 10,
-    fontSize: 18,
-    fontWeight: "800",
+    ...typography.section,
+    marginTop: spacing.xxl,
+    marginBottom: spacing.md,
     color: colors.primary,
   },
   featureRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   whyRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   whyCard: {
     flex: 1,
-    gap: 6,
-    padding: 12,
+    gap: spacing.sm,
+    padding: spacing.md,
   },
   whyIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: colors.primarySoft,
+    width: 34,
+    height: 34,
+    borderRadius: radius.sm,
+    backgroundColor: colors.sage,
     alignItems: "center",
     justifyContent: "center",
   },
   whyTitle: {
-    fontWeight: "800",
+    fontFamily: fonts.bold,
     fontSize: 13,
     color: colors.text,
   },
   whyText: {
-    fontSize: 11,
-    color: colors.textMuted,
-    lineHeight: 15,
+    ...typography.caption,
+    color: colors.textSecondary,
   },
 });
