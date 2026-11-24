@@ -1,37 +1,28 @@
 import { Tabs } from "expo-router";
-import { Text, type ColorValue } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import type { ColorValue } from "react-native";
 import { colors } from "@/theme/colors";
 
-const TabLabel = ({
-  label,
-  color,
-}: {
-  label: string;
-  color: ColorValue;
-}) => (
-  <Text
-    style={{
-      color: (color as string | null) ?? colors.tabInactive,
-      fontSize: 16,
-      fontWeight: "700",
-    }}
-  >
-    {label}
-  </Text>
-);
+const toIconColor = (color: ColorValue) =>
+  (color as string | null) ?? colors.tabInactive;
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerStyle: { backgroundColor: colors.background },
-        headerTintColor: colors.text,
-        headerTitleStyle: { fontWeight: "700" },
+        headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.tabInactive,
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          borderTopColor: colors.borderSoft,
+          height: 64,
+          paddingTop: 6,
+          paddingBottom: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "700",
         },
       }}
     >
@@ -39,35 +30,65 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Ana Sayfa",
-          tabBarIcon: ({ color }) => <TabLabel label="⌂" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="home-outline"
+              size={size}
+              color={toIconColor(color)}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="analyze"
         options={{
           title: "Analiz",
-          tabBarIcon: ({ color }) => <TabLabel label="◉" color={color} />,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "camera" : "camera-outline"}
+              size={size}
+              color={toIconColor(color)}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="calculator"
         options={{
           title: "Hesapla",
-          tabBarIcon: ({ color }) => <TabLabel label="∑" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="calculator-outline"
+              size={size}
+              color={toIconColor(color)}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="market"
         options={{
           title: "Piyasa",
-          tabBarIcon: ({ color }) => <TabLabel label="₺" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="bar-chart-outline"
+              size={size}
+              color={toIconColor(color)}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="more"
         options={{
           title: "Daha Fazla",
-          tabBarIcon: ({ color }) => <TabLabel label="⋯" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="ellipsis-horizontal"
+              size={size}
+              color={toIconColor(color)}
+            />
+          ),
         }}
       />
     </Tabs>

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import {
   analyzeImages,
   getAnalyzeErrorMessage,
@@ -15,15 +16,12 @@ import {
 import { saveHistory } from "@/api/history";
 import {
   AlertBox,
+  BrandHeader,
   Button,
   Card,
   Chip,
   Field,
   ScreenScroll,
-  SectionLabel,
-  Stat,
-  Subtitle,
-  Title,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/theme/colors";
@@ -31,14 +29,16 @@ import type { AdditionalInfo, AnalysisResult } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils/format";
 
 const categories = [
-  { id: "büyükbaş", label: "Büyükbaş" },
-  { id: "küçükbaş", label: "Küçükbaş" },
-] as const;
+  { id: "büyükbaş", label: "Büyükbaş", icon: "paw" as const },
+  { id: "küçükbaş", label: "Küçükbaş", icon: "rose-outline" as const },
+];
 
 export default function AnalyzeScreen() {
-  const { user, loading: authLoading, setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [images, setImages] = useState<string[]>([]);
-  const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo>({});
+  const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo>({
+    animalCategory: "büyükbaş",
+  });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -53,7 +53,8 @@ export default function AnalyzeScreen() {
         return;
       }
     } else {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) {
         setError("Galeri izni gerekli.");
         return;
@@ -64,13 +65,12 @@ export default function AnalyzeScreen() {
       ? await ImagePicker.launchCameraAsync({
           quality: 0.7,
           base64: true,
-          allowsEditing: false,
         })
       : await ImagePicker.launchImageLibraryAsync({
           quality: 0.7,
           base64: true,
           allowsMultipleSelection: true,
-          selectionLimit: 4,
+          selectionLimit: 4 - images.length,
         });
 
     if (picked.canceled) return;
@@ -133,17 +133,13 @@ export default function AnalyzeScreen() {
         getAnalyzeErrorMessage(response.errorType, response.detectedType) ||
           response.message,
       );
-      if (response.status === 401) {
-        router.push("/auth/login");
-      }
+      if (response.status === 401) router.push("/auth/login");
       setIsAnalyzing(false);
       return;
     }
 
     setResult(response.data);
-    if (response.data.user) {
-      setUser(response.data.user);
-    }
+    if (response.data.user) setUser(response.data.user);
 
     try {
       await saveHistory({
@@ -154,74 +150,79 @@ export default function AnalyzeScreen() {
         confidence: response.data.confidence,
       });
     } catch {
-      // History is best-effort; analysis already succeeded.
+      // best-effort
     }
 
     setIsAnalyzing(false);
   };
 
+  const slots = [0, 1, 2, 3];
+
   return (
     <ScreenScroll>
-      <Title>AI Analiz</Title>
-      <Subtitle>
-        Aynı hayvana ait 1–4 fotoğraf ekleyin. Web ile ortak Gemini analiz API’si
-        kullanılır.
-      </Subtitle>
+      <BrandHeader />
+      <Text style={styles.pageTitle}>Fotoğrafla AI Analiz</Text>
+      <Text style={styles.pageText}>
+        Hayvanınızın fotoğraflarını yükleyin; yapay zeka ile tür, kilo ve hisse
+        tahminini alın.
+      </Text>
 
-      {!authLoading && !user ? (
-        <AlertBox
-          tone="warning"
-          message="Analiz için giriş yapın. Yeni üyelere 3 ücretsiz kredi verilir."
-        />
-      ) : null}
-
-      {user ? (
-        <Text style={styles.creditLine}>
-          Kalan kredi: {user.remainingCredits}
-        </Text>
-      ) : null}
-
-      <View style={styles.actions}>
+      <View style={styles.ctaRow}>
         <Button
           label="Kamera"
+          icon="camera-outline"
+          flex
           onPress={() => handlePickImages(true)}
-          accessibilityLabel="Kameradan fotoğraf çek"
         />
         <Button
-          label="Galeriden Seç"
+          label="Galeri"
+          icon="images-outline"
           variant="secondary"
+          flex
           onPress={() => handlePickImages(false)}
         />
       </View>
 
-      {images.length > 0 ? (
-        <View style={styles.imageRow}>
-          {images.map((image, index) => (
-            <Pressable
-              key={`${index}-${image.slice(0, 24)}`}
-              onPress={() => handleRemoveImage(index)}
-              accessibilityLabel={`Fotoğraf ${index + 1}, silmek için dokunun`}
-              accessibilityRole="button"
-            >
-              <Image source={{ uri: image }} style={styles.thumb} />
-              <Text style={styles.removeHint}>Sil</Text>
-            </Pressable>
-          ))}
-        </View>
-      ) : (
-        <Card>
-          <Text style={styles.hint}>
-            Henüz fotoğraf yok. Farklı açılardan net çekimler ekleyin.
-          </Text>
-        </Card>
-      )}
+      <Text style={styles.slotHint}>
+        En fazla 4 fotoğraf ekleyin. Farklı açılar (yan, ön, arka) doğruluğu
+        artırır.
+      </Text>
 
-      <SectionLabel>Ek bilgiler (opsiyonel)</SectionLabel>
+      <View style={styles.slotRow}>
+        {slots.map((slot) => {
+          const image = images[slot];
+          return (
+            <Pressable
+              key={slot}
+              onPress={() =>
+                image ? handleRemoveImage(slot) : handlePickImages(false)
+              }
+              style={[styles.slot, image && styles.slotFilled]}
+              accessibilityLabel={
+                image
+                  ? `Fotoğraf ${slot + 1}, silmek için dokunun`
+                  : `${slot + 1}. fotoğraf ekle`
+              }
+            >
+              {image ? (
+                <Image source={{ uri: image }} style={styles.slotImage} />
+              ) : (
+                <>
+                  <Ionicons name="add" size={22} color={colors.primaryMid} />
+                  <Text style={styles.slotLabel}>{slot + 1}. Fotoğraf</Text>
+                </>
+              )}
+            </Pressable>
+          );
+        })}
+      </View>
+
       <View style={styles.chipRow}>
         {categories.map((category) => (
           <Chip
             key={category.id}
             label={category.label}
+            icon={category.icon}
             selected={additionalInfo.animalCategory === category.id}
             onPress={() =>
               setAdditionalInfo((current) => ({
@@ -235,6 +236,7 @@ export default function AnalyzeScreen() {
 
       <Field
         label="Tür / cins"
+        icon="paw-outline"
         value={additionalInfo.animalType || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, animalType: text }))
@@ -242,7 +244,8 @@ export default function AnalyzeScreen() {
         placeholder="Dana, Koç, Keçi..."
       />
       <Field
-        label="Tahmini ağırlık (kg)"
+        label="Tahmini kilo (kg)"
+        icon="bag-outline"
         value={additionalInfo.weight || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, weight: text }))
@@ -252,138 +255,310 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Bölge"
+        icon="location-outline"
         value={additionalInfo.region || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, region: text }))
         }
-        placeholder="İstanbul, Ankara..."
+        placeholder="İl / İlçe"
       />
       <Field
-        label="Özel not"
+        label="Not"
+        icon="document-text-outline"
         value={additionalInfo.specialNotes || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, specialNotes: text }))
         }
-        placeholder="Ek gözlemleriniz"
-        multiline
+        placeholder="Opsiyonel"
       />
+
+      {!user ? (
+        <Card style={styles.loginBanner}>
+          <Text style={styles.loginBannerText}>
+            Giriş yaparak 3 ücretsiz kredi kazanın. 1 analiz = 1 kredi.
+          </Text>
+          <Button
+            label="Giriş Yap"
+            variant="sage"
+            onPress={() => router.push("/auth/login")}
+          />
+        </Card>
+      ) : (
+        <Text style={styles.creditLine}>
+          Kalan kredi: {user.remainingCredits}
+        </Text>
+      )}
 
       {error ? <AlertBox message={error} /> : null}
 
       <Button
         label={isAnalyzing ? "Analiz ediliyor..." : "Analizi Başlat"}
+        icon="stats-chart-outline"
         onPress={handleAnalyze}
         loading={isAnalyzing}
         disabled={images.length === 0 || isAnalyzing}
       />
+      {images.length === 0 ? (
+        <Text style={styles.helper}>Henüz fotoğraf eklenmedi.</Text>
+      ) : null}
 
       {result ? (
         <Card style={styles.resultCard}>
-          <Text style={styles.resultTitle}>
-            {result.animalType} · {result.breed}
-          </Text>
-          <Text style={styles.resultMeta}>
-            Güven: %{formatNumber(result.confidence)} ·{" "}
-            {result.analysisNote || "Tek fotoğraf analizi"}
+          <View style={styles.successBanner}>
+            <Ionicons
+              name="checkmark-circle"
+              size={20}
+              color={colors.primary}
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.successTitle}>Analiz tamamlandı</Text>
+              <Text style={styles.successText}>
+                Fotoğraflarınız yapay zeka ile başarıyla analiz edildi.
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.resultAnimal}>
+            Tür: {result.animalType} · {result.breed}
           </Text>
 
-          <View style={styles.statsRow}>
-            <Stat
+          <View style={styles.metrics}>
+            <StatBlock
               label="Canlı kilo"
               value={`${formatNumber(result.estimatedWeight)} kg`}
             />
-            <Stat
-              label="Pazar değeri"
-              value={formatCurrency(result.marketValue)}
+            <StatBlock
+              label="Randıman"
+              value={`%${formatNumber(result.meatYield.yieldRatios.karkasYield)}`}
             />
-          </View>
-          <View style={styles.statsRow}>
-            <Stat
+            <StatBlock
               label="Karkas"
               value={`${formatNumber(result.meatYield.karkasWeight)} kg`}
             />
-            <Stat
-              label="1 hisse"
-              value={formatCurrency(result.costPerShare)}
-            />
           </View>
 
-          <Text style={styles.recoTitle}>Öneriler</Text>
-          {result.recommendations.map((item) => (
-            <Text key={item} style={styles.recoItem}>
-              • {item}
-            </Text>
-          ))}
+          <View style={styles.valueRow}>
+            <View style={styles.valueDark}>
+              <Text style={styles.valueDarkLabel}>Tahmini karkas değeri</Text>
+              <Text style={styles.valueDarkValue}>
+                {formatCurrency(result.marketValue)}
+              </Text>
+            </View>
+            <View style={styles.valueLight}>
+              <Text style={styles.valueLightLabel}>1/7 hisse</Text>
+              <Text style={styles.valueLightValue}>
+                {formatCurrency(result.costPerShare)}
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.disclaimer}>
+            Sonuçlar ön tahmindir. Profesyonel tartım ve veteriner kontrolü
+            önerilir. 1 kredi kullanıldı.
+          </Text>
+
+          <View style={styles.ctaRow}>
+            <Button
+              label="Yeni Analiz"
+              icon="camera-outline"
+              flex
+              onPress={() => {
+                setResult(null);
+                setImages([]);
+              }}
+            />
+            <Button
+              label="Hesabım"
+              icon="person-outline"
+              variant="secondary"
+              flex
+              onPress={() => router.push("/account")}
+            />
+          </View>
         </Card>
       ) : null}
     </ScreenScroll>
   );
 }
 
+const StatBlock = ({ label, value }: { label: string; value: string }) => (
+  <View style={styles.statBlock}>
+    <Text style={styles.statBlockLabel}>{label}</Text>
+    <Text style={styles.statBlockValue}>{value}</Text>
+  </View>
+);
+
 const styles = StyleSheet.create({
-  creditLine: {
-    marginTop: 10,
-    marginBottom: 8,
-    fontWeight: "700",
-    color: colors.primaryDark,
+  pageTitle: {
+    marginTop: 16,
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.primary,
+    letterSpacing: -0.4,
   },
-  actions: {
-    marginTop: 14,
-    gap: 10,
-  },
-  imageRow: {
-    marginTop: 14,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  thumb: {
-    width: 84,
-    height: 84,
-    borderRadius: 14,
-    backgroundColor: colors.surfaceMuted,
-  },
-  removeHint: {
-    marginTop: 4,
-    textAlign: "center",
-    fontSize: 11,
-    color: colors.danger,
-    fontWeight: "600",
-  },
-  hint: {
+  pageText: {
+    marginTop: 8,
     color: colors.textMuted,
-    lineHeight: 20,
+    lineHeight: 21,
   },
-  chipRow: {
+  ctaRow: {
+    marginTop: 16,
+    flexDirection: "row",
+    gap: 10,
+  },
+  slotHint: {
+    marginTop: 14,
+    marginBottom: 10,
+    color: colors.textMuted,
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  slotRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
+  },
+  slot: {
+    width: "23%",
+    aspectRatio: 1,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderStyle: "dashed",
+    borderColor: colors.primaryMid,
+    backgroundColor: colors.primarySoftAlt,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 4,
+  },
+  slotFilled: {
+    borderStyle: "solid",
+    padding: 0,
+    overflow: "hidden",
+  },
+  slotImage: {
+    width: "100%",
+    height: "100%",
+  },
+  slotLabel: {
+    marginTop: 4,
+    fontSize: 9,
+    fontWeight: "700",
+    color: colors.primaryMid,
+    textAlign: "center",
+  },
+  chipRow: {
+    marginTop: 16,
+    marginBottom: 8,
+    flexDirection: "row",
+    gap: 8,
+  },
+  loginBanner: {
     marginBottom: 10,
+    backgroundColor: colors.primarySoftAlt,
+    borderColor: colors.primarySoft,
+    gap: 10,
+  },
+  loginBannerText: {
+    color: colors.primaryDark,
+    fontWeight: "600",
+    lineHeight: 20,
+  },
+  creditLine: {
+    marginBottom: 10,
+    fontWeight: "700",
+    color: colors.primaryDark,
+  },
+  helper: {
+    marginTop: 8,
+    textAlign: "center",
+    color: colors.textMuted,
+    fontSize: 12,
   },
   resultCard: {
     marginTop: 16,
-    gap: 10,
+    gap: 12,
   },
-  resultTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: colors.text,
-  },
-  resultMeta: {
-    color: colors.textMuted,
-    fontSize: 13,
-  },
-  statsRow: {
+  successBanner: {
     flexDirection: "row",
     gap: 10,
+    backgroundColor: colors.primarySoft,
+    borderRadius: 14,
+    padding: 12,
+    alignItems: "flex-start",
   },
-  recoTitle: {
-    marginTop: 6,
-    fontWeight: "700",
+  successTitle: {
+    fontWeight: "800",
+    color: colors.primaryDark,
+  },
+  successText: {
+    marginTop: 2,
+    color: colors.primaryDark,
+    fontSize: 12,
+  },
+  resultAnimal: {
+    fontWeight: "800",
+    color: colors.text,
+    fontSize: 16,
+  },
+  metrics: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  statBlock: {
+    flex: 1,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 12,
+    padding: 10,
+  },
+  statBlockLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    fontWeight: "600",
+  },
+  statBlockValue: {
+    marginTop: 4,
+    fontWeight: "800",
     color: colors.text,
   },
-  recoItem: {
+  valueRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  valueDark: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    padding: 12,
+  },
+  valueDarkLabel: {
+    color: colors.primarySoft,
+    fontSize: 12,
+  },
+  valueDarkValue: {
+    marginTop: 6,
+    color: colors.white,
+    fontWeight: "800",
+    fontSize: 18,
+  },
+  valueLight: {
+    flex: 1,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 14,
+    padding: 12,
+  },
+  valueLightLabel: {
     color: colors.textMuted,
-    lineHeight: 20,
+    fontSize: 12,
+  },
+  valueLightValue: {
+    marginTop: 6,
+    color: colors.primary,
+    fontWeight: "800",
+    fontSize: 18,
+  },
+  disclaimer: {
+    fontSize: 12,
+    color: colors.textMuted,
+    lineHeight: 17,
   },
 });

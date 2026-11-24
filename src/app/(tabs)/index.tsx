@@ -1,163 +1,283 @@
-import { Link, router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import {
+  BrandHeader,
   Button,
   Card,
-  Pill,
+  IconTile,
   ScreenScroll,
-  Subtitle,
-  Title,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/theme/colors";
-
-const features = [
-  {
-    title: "AI Fotoğraf Analizi",
-    text: "Kameradan veya galeriden çekilen fotoğraflarla kilo, randıman ve değer tahmini.",
-  },
-  {
-    title: "Manuel Hisse Hesabı",
-    text: "Canlı kilo ve et fiyatıyla 1/7 hisse maliyetini anında görün.",
-  },
-  {
-    title: "Ortak Backend",
-    text: "Web ile aynı API: hesap, kredi, analiz ve ödeme altyapısı paylaşılır.",
-  },
-];
 
 export default function HomeScreen() {
   const { user, loading } = useAuth();
 
   return (
     <ScreenScroll>
-      <LinearGradient
-        colors={["#ECFDF5", "#F7F4EF", "#EEF2FF"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.hero}
-      >
-        <Pill>Kurban AI · Mobil</Pill>
-        <Text style={styles.brand}>Kurbanlık Kilo</Text>
-        <Title>Akıllı kurbanlık analizi cebinizde</Title>
-        <Subtitle>
-          Fotoğraf çekin, kilo ve hisse fiyatını öğrenin. iOS ve Android için Expo
-          ile web backend&apos;ine bağlı.
-        </Subtitle>
+      <BrandHeader />
 
-        <View style={styles.heroActions}>
-          <Button
-            label="Analiz Başlat"
-            onPress={() => router.push("/analyze")}
-            accessibilityLabel="Analiz başlat"
-          />
-          <Button
-            label="Manuel Hesapla"
-            variant="secondary"
-            onPress={() => router.push("/calculator")}
-          />
-        </View>
-
-        {!loading && user ? (
-          <Text style={styles.creditHint}>
-            Merhaba {user.name} · Kalan kredi: {user.remainingCredits}
+      <View style={styles.hero}>
+        <View style={styles.heroCopy}>
+          <Text style={styles.heroTitle}>Kurbanlık Kilo ve Hisse Hesabı</Text>
+          <Text style={styles.heroText}>
+            Fotoğraf yükleyerek AI analizi yapın veya manuel veri girerek karkas
+            ve hisse maliyetini hesaplayın.
           </Text>
+        </View>
+        <View style={styles.heroBadge}>
+          <Ionicons name="leaf" size={28} color={colors.primary} />
+        </View>
+      </View>
+
+      <View style={styles.ctaRow}>
+        <Button
+          label="Analiz Başlat"
+          icon="camera-outline"
+          flex
+          onPress={() => router.push("/analyze")}
+        />
+        <Button
+          label="Manuel Hesapla"
+          icon="calculator-outline"
+          variant="secondary"
+          flex
+          onPress={() => router.push("/calculator")}
+        />
+      </View>
+
+      <Card style={styles.guestCard}>
+        {!loading && user ? (
+          <>
+            <View style={styles.guestRow}>
+              <View style={styles.avatar}>
+                <Ionicons name="person" size={18} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.guestTitle}>
+                  {user.name} {user.surname}
+                </Text>
+                <Text style={styles.guestText}>
+                  Kalan kredi: {user.remainingCredits}
+                </Text>
+              </View>
+              <Button
+                label="Hesabım"
+                variant="sage"
+                onPress={() => router.push("/account")}
+              />
+            </View>
+          </>
         ) : (
-          <View style={styles.authRow}>
-            <Link href="/auth/login" style={styles.link}>
-              Giriş yap
-            </Link>
-            <Text style={styles.dot}>·</Text>
-            <Link href="/auth/register" style={styles.link}>
-              Ücretsiz kayıt (3 kredi)
-            </Link>
+          <View style={styles.guestRow}>
+            <View style={styles.avatar}>
+              <Ionicons name="person-outline" size={18} color={colors.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.guestTitle}>Misafir kullanıcı</Text>
+              <Text style={styles.guestText}>
+                Hesapsız temel özellikleri kullanabilirsiniz.
+              </Text>
+            </View>
+            <View style={styles.guestActions}>
+              <Button
+                label="Giriş"
+                variant="ghost"
+                onPress={() => router.push("/auth/login")}
+              />
+              <Button
+                label="Kayıt Ol"
+                variant="sage"
+                onPress={() => router.push("/auth/register")}
+              />
+            </View>
           </View>
         )}
-      </LinearGradient>
+      </Card>
 
-      <View style={styles.section}>
-        {features.map((feature) => (
-          <Card key={feature.title} style={styles.featureCard}>
-            <Text style={styles.featureTitle}>{feature.title}</Text>
-            <Text style={styles.featureText}>{feature.text}</Text>
+      <View style={styles.trustBar}>
+        <Text style={styles.trustItem}>Web ile ortak backend</Text>
+        <Text style={styles.trustDot}>·</Text>
+        <Text style={styles.trustItem}>Güvenli giriş</Text>
+        <Text style={styles.trustDot}>·</Text>
+        <Text style={styles.trustItem}>Kredi sistemi</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Ana hizmetler</Text>
+      <View style={styles.featureRow}>
+        <IconTile
+          icon="camera-outline"
+          title="AI Analiz"
+          text="Fotoğrafla kilo ve hisse tahmini"
+          onPress={() => router.push("/analyze")}
+        />
+        <IconTile
+          icon="calculator-outline"
+          title="Manuel"
+          text="Canlı kilo ile anlık hesap"
+          onPress={() => router.push("/calculator")}
+        />
+        <IconTile
+          icon="bar-chart-outline"
+          title="Piyasa"
+          text="Güncel fiyat referansları"
+          onPress={() => router.push("/market")}
+        />
+      </View>
+
+      <Text style={styles.sectionTitle}>Neden Kurban AI?</Text>
+      <View style={styles.whyRow}>
+        {[
+          {
+            icon: "flash-outline" as const,
+            title: "Hızlı sonuç",
+            text: "Saniyeler içinde tahmin",
+          },
+          {
+            icon: "layers-outline" as const,
+            title: "Karkas & hisse",
+            text: "Canlı kilodan randıman",
+          },
+          {
+            icon: "shield-checkmark-outline" as const,
+            title: "Güvenilir rehber",
+            text: "Güncel referanslarla",
+          },
+        ].map((item) => (
+          <Card key={item.title} style={styles.whyCard}>
+            <View style={styles.whyIcon}>
+              <Ionicons name={item.icon} size={18} color={colors.primary} />
+            </View>
+            <Text style={styles.whyTitle}>{item.title}</Text>
+            <Text style={styles.whyText}>{item.text}</Text>
           </Card>
         ))}
       </View>
-
-      <Card style={styles.ctaCard}>
-        <Text style={styles.featureTitle}>Nasıl çalışır?</Text>
-        <Text style={styles.featureText}>
-          1) Giriş yapın · 2) Fotoğraf ekleyin veya kilo girin · 3) Sonuçları ve
-          hisse fiyatını görün.
-        </Text>
-        <Button
-          label="Paketleri Gör"
-          variant="secondary"
-          onPress={() => router.push("/pricing")}
-        />
-      </Card>
     </ScreenScroll>
   );
 }
 
 const styles = StyleSheet.create({
   hero: {
-    borderRadius: 28,
-    padding: 22,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: "hidden",
+    marginTop: 18,
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
   },
-  brand: {
-    marginTop: 14,
-    fontSize: 18,
+  heroCopy: {
+    flex: 1,
+  },
+  heroTitle: {
+    fontSize: 30,
     fontWeight: "800",
-    letterSpacing: 0.2,
-    color: colors.primaryDark,
+    color: colors.primary,
+    letterSpacing: -0.6,
+    lineHeight: 36,
   },
-  heroActions: {
-    marginTop: 20,
+  heroText: {
+    marginTop: 10,
+    color: colors.textMuted,
+    lineHeight: 21,
+    fontSize: 14,
+  },
+  heroBadge: {
+    width: 72,
+    height: 72,
+    borderRadius: 22,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ctaRow: {
+    marginTop: 18,
+    flexDirection: "row",
     gap: 10,
   },
-  creditHint: {
+  guestCard: {
     marginTop: 14,
-    color: colors.primaryDark,
-    fontWeight: "600",
   },
-  authRow: {
-    marginTop: 14,
+  guestRow: {
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
-    gap: 6,
+    gap: 10,
   },
-  link: {
-    color: colors.primary,
-    fontWeight: "700",
+  avatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  dot: {
-    color: colors.textSoft,
-  },
-  section: {
-    marginTop: 18,
-    gap: 12,
-  },
-  featureCard: {
-    gap: 6,
-  },
-  featureTitle: {
-    fontSize: 17,
-    fontWeight: "700",
+  guestTitle: {
+    fontWeight: "800",
     color: colors.text,
   },
-  featureText: {
-    fontSize: 14,
-    lineHeight: 21,
+  guestText: {
+    marginTop: 2,
+    fontSize: 12,
     color: colors.textMuted,
   },
-  ctaCard: {
+  guestActions: {
+    gap: 4,
+    alignItems: "flex-end",
+  },
+  trustBar: {
     marginTop: 12,
-    gap: 12,
+    borderRadius: 14,
+    backgroundColor: colors.primarySoftAlt,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 6,
+  },
+  trustItem: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.primaryDark,
+  },
+  trustDot: {
+    color: colors.primaryMid,
+  },
+  sectionTitle: {
+    marginTop: 22,
+    marginBottom: 10,
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  featureRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  whyRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  whyCard: {
+    flex: 1,
+    gap: 6,
+    padding: 12,
+  },
+  whyIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  whyTitle: {
+    fontWeight: "800",
+    fontSize: 13,
+    color: colors.text,
+  },
+  whyText: {
+    fontSize: 11,
+    color: colors.textMuted,
+    lineHeight: 15,
   },
 });

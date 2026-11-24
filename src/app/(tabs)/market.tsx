@@ -1,42 +1,52 @@
 import { useEffect, useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { fetchMarketPrices } from "@/api/market";
 import {
   AlertBox,
+  BrandHeader,
+  Button,
   Card,
   EmptyState,
   LoadingBlock,
   ScreenScroll,
-  Stat,
-  Subtitle,
-  Title,
 } from "@/components/ui";
 import { colors } from "@/theme/colors";
 import type { MarketAnimal, MarketData } from "@/types";
 import { formatCurrency, formatDate } from "@/utils/format";
 
-const AnimalCard = ({ animal }: { animal: MarketAnimal }) => (
+const AnimalCard = ({
+  animal,
+  icon,
+}: {
+  animal: MarketAnimal;
+  icon: keyof typeof Ionicons.glyphMap;
+}) => (
   <Card style={styles.card}>
-    <View style={styles.cardHeader}>
-      <Text style={styles.animalName}>{animal.name}</Text>
-      <Text
-        style={[
-          styles.trend,
-          animal.trend === "up" ? styles.trendUp : styles.trendDown,
-        ]}
-      >
-        {animal.trend === "up" ? "▲" : "▼"} {animal.changePercent}%
-      </Text>
-    </View>
-    <View style={styles.statsRow}>
-      <Stat
-        label="Ortalama"
-        value={formatCurrency(animal.priceRange.average)}
-      />
-      <Stat
-        label="₺/kg ort."
-        value={formatCurrency(animal.pricePerKg.average)}
-      />
+    <View style={styles.cardTop}>
+      <View style={styles.animalIcon}>
+        <Ionicons name={icon} size={22} color={colors.primary} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.animalName}>{animal.name}</Text>
+        <Text style={styles.animalSub}>Piyasa ortalama fiyatı</Text>
+        <Text style={styles.price}>
+          {formatCurrency(animal.pricePerKg.average).replace(" ₺", "")}{" "}
+          <Text style={styles.priceUnit}>₺/kg</Text>
+        </Text>
+      </View>
+      <View style={styles.trendCol}>
+        <View
+          style={[
+            styles.trendPill,
+            animal.trend === "up" ? styles.trendUp : styles.trendDown,
+          ]}
+        >
+          <Text style={styles.trendText}>
+            {animal.trend === "up" ? "Yukarı" : "Aşağı"} {animal.changePercent}%
+          </Text>
+        </View>
+      </View>
     </View>
     <Text style={styles.range}>
       Aralık: {formatCurrency(animal.priceRange.min)} –{" "}
@@ -65,14 +75,14 @@ export default function MarketScreen() {
         if (cancelled) return;
         setError("Piyasa verileri alınamadı.");
       } finally {
-        if (cancelled) return;
-        setLoading(false);
-        setRefreshing(false);
+        if (!cancelled) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
     };
 
     void run();
-
     return () => {
       cancelled = true;
     };
@@ -86,6 +96,7 @@ export default function MarketScreen() {
   if (loading) {
     return (
       <ScreenScroll>
+        <BrandHeader />
         <LoadingBlock label="Piyasa yükleniyor..." />
       </ScreenScroll>
     );
@@ -97,10 +108,24 @@ export default function MarketScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
     >
-      <Title>Piyasa</Title>
-      <Subtitle>
-        Web backend&apos;indeki güncel canlı hayvan fiyat referansları.
-      </Subtitle>
+      <BrandHeader />
+      <Text style={styles.pageTitle}>Piyasa</Text>
+      <Text style={styles.pageText}>
+        Canlı hayvan piyasasına ilişkin güncel fiyat referansları ve trendler.
+      </Text>
+
+      <View style={styles.updateBar}>
+        <Text style={styles.updateText}>
+          Son güncelleme:{" "}
+          {data ? formatDate(data.lastUpdated) : "—"}
+        </Text>
+        <Button
+          label="Güncelle"
+          icon="refresh"
+          variant="sage"
+          onPress={handleRefresh}
+        />
+      </View>
 
       {error ? <AlertBox message={error} /> : null}
 
@@ -111,17 +136,21 @@ export default function MarketScreen() {
         />
       ) : (
         <>
-          <Text style={styles.meta}>
-            {data.region} · Son güncelleme {formatDate(data.lastUpdated)}
-          </Text>
-          <AnimalCard animal={data.livestock.cattle} />
-          <AnimalCard animal={data.livestock.sheep} />
-          <AnimalCard animal={data.livestock.goat} />
+          <AnimalCard animal={data.livestock.cattle} icon="paw" />
+          <AnimalCard animal={data.livestock.sheep} icon="leaf-outline" />
+          <AnimalCard animal={data.livestock.goat} icon="nutrition-outline" />
 
-          <Card style={styles.insights}>
-            <Text style={styles.insightsTitle}>Piyasa notları</Text>
+          <Card style={styles.notes}>
+            <View style={styles.notesHeader}>
+              <Ionicons
+                name="document-text-outline"
+                size={18}
+                color={colors.primary}
+              />
+              <Text style={styles.notesTitle}>Piyasa Notları</Text>
+            </View>
             {data.marketInsights.map((insight) => (
-              <Text key={insight} style={styles.insight}>
+              <Text key={insight} style={styles.note}>
                 • {insight}
               </Text>
             ))}
@@ -133,54 +162,105 @@ export default function MarketScreen() {
 }
 
 const styles = StyleSheet.create({
-  meta: {
-    marginTop: 10,
+  pageTitle: {
+    marginTop: 16,
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  pageText: {
+    marginTop: 8,
+    color: colors.textMuted,
+    lineHeight: 21,
+  },
+  updateBar: {
+    marginTop: 14,
     marginBottom: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  updateText: {
+    flex: 1,
     color: colors.textMuted,
     fontSize: 13,
   },
   card: {
-    marginTop: 12,
-    gap: 12,
+    marginTop: 10,
+    gap: 10,
   },
-  cardHeader: {
+  cardTop: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  animalIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: colors.primarySoft,
     alignItems: "center",
+    justifyContent: "center",
   },
   animalName: {
     fontSize: 17,
-    fontWeight: "700",
+    fontWeight: "800",
     color: colors.text,
   },
-  trend: {
-    fontWeight: "700",
-    fontSize: 13,
+  animalSub: {
+    marginTop: 2,
+    fontSize: 12,
+    color: colors.textMuted,
+  },
+  price: {
+    marginTop: 6,
+    fontSize: 24,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  priceUnit: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  trendCol: {
+    alignItems: "flex-end",
+  },
+  trendPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   trendUp: {
-    color: colors.success,
+    backgroundColor: colors.primarySoft,
   },
   trendDown: {
-    color: colors.danger,
+    backgroundColor: colors.dangerSoft,
   },
-  statsRow: {
-    flexDirection: "row",
-    gap: 10,
+  trendText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: colors.primaryDark,
   },
   range: {
     color: colors.textMuted,
-    fontSize: 13,
+    fontSize: 12,
   },
-  insights: {
+  notes: {
     marginTop: 12,
     gap: 8,
   },
-  insightsTitle: {
-    fontWeight: "700",
+  notesHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  notesTitle: {
+    fontWeight: "800",
     color: colors.text,
     fontSize: 16,
   },
-  insight: {
+  note: {
     color: colors.textMuted,
     lineHeight: 20,
   },

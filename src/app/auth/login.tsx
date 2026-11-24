@@ -3,11 +3,10 @@ import { StyleSheet, Text } from "react-native";
 import { Link, router } from "expo-router";
 import {
   AlertBox,
+  BrandHeader,
   Button,
   Field,
   ScreenScroll,
-  Subtitle,
-  Title,
 } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/theme/colors";
@@ -21,7 +20,6 @@ export default function LoginScreen() {
 
   const handleSubmit = async () => {
     setError("");
-
     if (!email.trim() || !password) {
       setError("E-posta ve şifre gerekli.");
       return;
@@ -41,13 +39,17 @@ export default function LoginScreen() {
 
   return (
     <ScreenScroll>
-      <Title>Giriş Yap</Title>
-      <Subtitle>Web hesabınızla aynı e-posta ve şifreyi kullanın.</Subtitle>
+      <BrandHeader />
+      <Text style={styles.pageTitle}>Giriş Yap</Text>
+      <Text style={styles.pageText}>
+        Web hesabınızla aynı e-posta ve şifreyi kullanın.
+      </Text>
 
       {error ? <AlertBox message={error} /> : null}
 
       <Field
         label="E-posta"
+        icon="mail-outline"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -57,6 +59,7 @@ export default function LoginScreen() {
       />
       <Field
         label="Şifre"
+        icon="lock-closed-outline"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -66,6 +69,7 @@ export default function LoginScreen() {
 
       <Button
         label="Giriş Yap"
+        icon="log-in-outline"
         onPress={handleSubmit}
         loading={submitting}
       />
@@ -81,6 +85,18 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  pageTitle: {
+    marginTop: 16,
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  pageText: {
+    marginTop: 8,
+    marginBottom: 14,
+    color: colors.textMuted,
+    lineHeight: 21,
+  },
   footer: {
     marginTop: 18,
     textAlign: "center",

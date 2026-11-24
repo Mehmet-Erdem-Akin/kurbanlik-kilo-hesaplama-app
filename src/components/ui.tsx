@@ -9,7 +9,12 @@ import {
   type TextInputProps,
   type ViewProps,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/theme/colors";
+import { BrandHeader } from "@/components/BrandHeader";
+import { FarmFooter } from "@/components/FarmFooter";
+
+export { BrandHeader, FarmFooter };
 
 export const Screen = ({
   children,
@@ -25,10 +30,12 @@ export const ScreenScroll = ({
   children,
   contentStyle,
   refreshControl,
+  showFarmFooter = true,
 }: {
   children: React.ReactNode;
   contentStyle?: object;
   refreshControl?: React.ReactElement;
+  showFarmFooter?: boolean;
 }) => (
   <ScrollView
     style={styles.screen}
@@ -38,6 +45,7 @@ export const ScreenScroll = ({
     refreshControl={refreshControl}
   >
     {children}
+    {showFarmFooter ? <FarmFooter /> : null}
   </ScrollView>
 );
 
@@ -61,9 +69,29 @@ export const Card = ({
   style?: object;
 }) => <View style={[styles.card, style]}>{children}</View>;
 
-export const Pill = ({ children }: { children: React.ReactNode }) => (
-  <View style={styles.pill}>
-    <Text style={styles.pillText}>{children}</Text>
+export const Pill = ({
+  children,
+  tone = "sage",
+}: {
+  children: React.ReactNode;
+  tone?: "sage" | "primary" | "gold";
+}) => (
+  <View
+    style={[
+      styles.pill,
+      tone === "primary" && styles.pillPrimary,
+      tone === "gold" && styles.pillGold,
+    ]}
+  >
+    <Text
+      style={[
+        styles.pillText,
+        tone === "primary" && styles.pillTextPrimary,
+        tone === "gold" && styles.pillTextGold,
+      ]}
+    >
+      {children}
+    </Text>
   </View>
 );
 
@@ -74,15 +102,23 @@ export const Button = ({
   disabled,
   loading,
   accessibilityLabel,
+  icon,
+  flex,
 }: {
   label: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "danger" | "ghost";
+  variant?: "primary" | "secondary" | "danger" | "ghost" | "sage";
   disabled?: boolean;
   loading?: boolean;
   accessibilityLabel?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
+  flex?: boolean;
 }) => {
   const isDisabled = disabled || loading;
+  const iconColor =
+    variant === "secondary" || variant === "ghost" || variant === "sage"
+      ? colors.primary
+      : colors.white;
 
   return (
     <Pressable
@@ -93,26 +129,33 @@ export const Button = ({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
+        flex && styles.buttonFlex,
         variant === "primary" && styles.buttonPrimary,
         variant === "secondary" && styles.buttonSecondary,
         variant === "danger" && styles.buttonDanger,
         variant === "ghost" && styles.buttonGhost,
+        variant === "sage" && styles.buttonSage,
         pressed && !isDisabled && styles.buttonPressed,
         isDisabled && styles.buttonDisabled,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "secondary" ? colors.primary : colors.white} />
+        <ActivityIndicator color={iconColor} />
       ) : (
-        <Text
-          style={[
-            styles.buttonLabel,
-            variant === "secondary" && styles.buttonLabelSecondary,
-            variant === "ghost" && styles.buttonLabelGhost,
-          ]}
-        >
-          {label}
-        </Text>
+        <View style={styles.buttonInner}>
+          {icon ? <Ionicons name={icon} size={18} color={iconColor} /> : null}
+          <Text
+            style={[
+              styles.buttonLabel,
+              (variant === "secondary" ||
+                variant === "ghost" ||
+                variant === "sage") &&
+                styles.buttonLabelSecondary,
+            ]}
+          >
+            {label}
+          </Text>
+        </View>
       )}
     </Pressable>
   );
@@ -121,16 +164,31 @@ export const Button = ({
 export const Field = ({
   label,
   error,
+  icon,
   ...props
-}: TextInputProps & { label: string; error?: string }) => (
+}: TextInputProps & {
+  label: string;
+  error?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
+}) => (
   <View style={styles.field}>
     <Text style={styles.fieldLabel}>{label}</Text>
-    <TextInput
-      placeholderTextColor={colors.textSoft}
-      style={[styles.input, error ? styles.inputError : null]}
-      accessibilityLabel={label}
-      {...props}
-    />
+    <View style={[styles.inputWrap, error ? styles.inputError : null]}>
+      {icon ? (
+        <Ionicons
+          name={icon}
+          size={18}
+          color={colors.textMuted}
+          style={styles.inputIcon}
+        />
+      ) : null}
+      <TextInput
+        placeholderTextColor={colors.textSoft}
+        style={styles.input}
+        accessibilityLabel={label}
+        {...props}
+      />
+    </View>
     {error ? <Text style={styles.errorText}>{error}</Text> : null}
   </View>
 );
@@ -140,13 +198,14 @@ export const AlertBox = ({
   tone = "danger",
 }: {
   message: string;
-  tone?: "danger" | "success" | "warning";
+  tone?: "danger" | "success" | "warning" | "info";
 }) => (
   <View
     style={[
       styles.alert,
       tone === "success" && styles.alertSuccess,
       tone === "warning" && styles.alertWarning,
+      tone === "info" && styles.alertInfo,
     ]}
     accessibilityRole="alert"
   >
@@ -155,6 +214,7 @@ export const AlertBox = ({
         styles.alertText,
         tone === "success" && styles.alertTextSuccess,
         tone === "warning" && styles.alertTextWarning,
+        tone === "info" && styles.alertTextInfo,
       ]}
     >
       {message}
@@ -175,7 +235,11 @@ export const EmptyState = ({
   </View>
 );
 
-export const LoadingBlock = ({ label = "Yükleniyor..." }: { label?: string }) => (
+export const LoadingBlock = ({
+  label = "Yükleniyor...",
+}: {
+  label?: string;
+}) => (
   <View style={styles.loading}>
     <ActivityIndicator color={colors.primary} size="large" />
     <Text style={styles.loadingText}>{label}</Text>
@@ -199,10 +263,12 @@ export const Chip = ({
   label,
   selected,
   onPress,
+  icon,
 }: {
   label: string;
   selected?: boolean;
   onPress: () => void;
+  icon?: keyof typeof Ionicons.glyphMap;
 }) => (
   <Pressable
     accessibilityRole="button"
@@ -211,9 +277,77 @@ export const Chip = ({
     onPress={onPress}
     style={[styles.chip, selected && styles.chipSelected]}
   >
+    {icon ? (
+      <Ionicons
+        name={icon}
+        size={16}
+        color={selected ? colors.white : colors.primary}
+      />
+    ) : null}
     <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
       {label}
     </Text>
+  </Pressable>
+);
+
+export const IconTile = ({
+  icon,
+  title,
+  text,
+  onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  text: string;
+  onPress?: () => void;
+}) => (
+  <Pressable
+    onPress={onPress}
+    disabled={!onPress}
+    accessibilityRole={onPress ? "button" : undefined}
+    style={styles.iconTile}
+  >
+    <View style={styles.iconTileIcon}>
+      <Ionicons name={icon} size={22} color={colors.primary} />
+    </View>
+    <Text style={styles.iconTileTitle}>{title}</Text>
+    <Text style={styles.iconTileText}>{text}</Text>
+  </Pressable>
+);
+
+export const MenuRow = ({
+  icon,
+  title,
+  subtitle,
+  onPress,
+  danger,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+  danger?: boolean;
+}) => (
+  <Pressable
+    onPress={onPress}
+    accessibilityRole="button"
+    accessibilityLabel={title}
+    style={styles.menuRow}
+  >
+    <View style={[styles.menuIcon, danger && styles.menuIconDanger]}>
+      <Ionicons
+        name={icon}
+        size={18}
+        color={danger ? colors.danger : colors.primary}
+      />
+    </View>
+    <View style={styles.menuCopy}>
+      <Text style={[styles.menuTitle, danger && { color: colors.danger }]}>
+        {title}
+      </Text>
+      <Text style={styles.menuSubtitle}>{subtitle}</Text>
+    </View>
+    <Ionicons name="chevron-forward" size={18} color={colors.textSoft} />
   </Pressable>
 );
 
@@ -223,36 +357,36 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 40,
+    paddingHorizontal: 18,
+    paddingTop: 12,
+    paddingBottom: 28,
   },
   title: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: colors.text,
-    letterSpacing: -0.6,
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.primary,
+    letterSpacing: -0.5,
   },
   subtitle: {
     marginTop: 8,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 21,
     color: colors.textMuted,
   },
   sectionLabel: {
     marginBottom: 10,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "700",
-    letterSpacing: 0.4,
+    letterSpacing: 0.5,
     textTransform: "uppercase",
     color: colors.textMuted,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 22,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.border,
-    padding: 18,
+    borderColor: colors.borderSoft,
+    padding: 16,
   },
   pill: {
     alignSelf: "flex-start",
@@ -261,25 +395,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
+  pillPrimary: {
+    backgroundColor: colors.primary,
+  },
+  pillGold: {
+    backgroundColor: colors.goldSoft,
+  },
   pillText: {
     color: colors.primaryDark,
     fontSize: 12,
     fontWeight: "700",
+  },
+  pillTextPrimary: {
+    color: colors.white,
+  },
+  pillTextGold: {
+    color: "#8A6A00",
   },
   button: {
     minHeight: 52,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
+  },
+  buttonFlex: {
+    flex: 1,
   },
   buttonPrimary: {
     backgroundColor: colors.primary,
   },
   buttonSecondary: {
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+  },
+  buttonSage: {
+    backgroundColor: colors.primarySoft,
   },
   buttonDanger: {
     backgroundColor: colors.danger,
@@ -291,37 +443,48 @@ const styles = StyleSheet.create({
     opacity: 0.88,
   },
   buttonDisabled: {
-    opacity: 0.55,
+    opacity: 0.5,
+  },
+  buttonInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   buttonLabel: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
   },
   buttonLabelSecondary: {
-    color: colors.text,
-  },
-  buttonLabelGhost: {
     color: colors.primary,
   },
   field: {
-    marginBottom: 14,
+    marginBottom: 12,
   },
   fieldLabel: {
     marginBottom: 6,
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "700",
     color: colors.text,
   },
-  input: {
+  inputWrap: {
     minHeight: 50,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
-    paddingHorizontal: 14,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
     color: colors.text,
+    paddingVertical: 12,
   },
   inputError: {
     borderColor: colors.danger,
@@ -337,25 +500,33 @@ const styles = StyleSheet.create({
     borderColor: "#FECACA",
     backgroundColor: colors.dangerSoft,
     padding: 12,
+    marginBottom: 10,
   },
   alertSuccess: {
-    borderColor: "#A7F3D0",
+    borderColor: "#A6F4C5",
     backgroundColor: colors.primarySoft,
   },
   alertWarning: {
     borderColor: "#FDE68A",
     backgroundColor: colors.warningSoft,
   },
+  alertInfo: {
+    borderColor: "#B7DFC8",
+    backgroundColor: colors.primarySoftAlt,
+  },
   alertText: {
     color: colors.danger,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 19,
   },
   alertTextSuccess: {
     color: colors.primaryDark,
   },
   alertTextWarning: {
     color: colors.warning,
+  },
+  alertTextInfo: {
+    color: colors.primaryDark,
   },
   empty: {
     alignItems: "center",
@@ -384,20 +555,20 @@ const styles = StyleSheet.create({
   stat: {
     flex: 1,
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 16,
-    padding: 14,
+    borderRadius: 14,
+    padding: 12,
   },
   statLabel: {
     fontSize: 11,
     fontWeight: "700",
     textTransform: "uppercase",
-    letterSpacing: 0.4,
+    letterSpacing: 0.3,
     color: colors.textMuted,
   },
   statValue: {
     marginTop: 6,
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "800",
     color: colors.text,
   },
   chip: {
@@ -407,6 +578,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     paddingHorizontal: 14,
     paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   chipSelected: {
     backgroundColor: colors.primary,
@@ -414,10 +588,70 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: colors.text,
-    fontWeight: "600",
+    fontWeight: "700",
     fontSize: 13,
   },
   chipTextSelected: {
     color: colors.white,
+  },
+  iconTile: {
+    flex: 1,
+    minWidth: "30%",
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+    padding: 14,
+    gap: 8,
+  },
+  iconTileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconTileTitle: {
+    fontWeight: "800",
+    color: colors.text,
+    fontSize: 14,
+  },
+  iconTileText: {
+    color: colors.textMuted,
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  menuRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSoft,
+  },
+  menuIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  menuIconDanger: {
+    backgroundColor: colors.dangerSoft,
+  },
+  menuCopy: {
+    flex: 1,
+  },
+  menuTitle: {
+    fontWeight: "700",
+    color: colors.text,
+    fontSize: 15,
+  },
+  menuSubtitle: {
+    marginTop: 2,
+    color: colors.textMuted,
+    fontSize: 12,
   },
 });

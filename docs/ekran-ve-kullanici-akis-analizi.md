@@ -154,4 +154,18 @@ Blog, KVKK sayfaları, PDF export UI detayı, dark mode, onboarding carousel.
 
 ---
 
-*Son güncelleme: mobil Expo istemci iskeleti ile uyumlu.*
+## Tasarım referansları
+
+Mockup görselleri: `docs/design-refs/`
+
+- `01-home.jpg` — Ana sayfa
+- `02-account.jpg` — Hesabım
+- `03-pricing.jpg` — Paketler
+- `04-market.jpg` — Piyasa
+- `05-calculator.jpg` — Manuel hesap
+- `06-analyze-result.jpg` — Analiz sonucu
+- `07-analyze-form.jpg` — Analiz formu
+
+Görsel dil: koyu forest green + krem zemin, kartlı layout, Kurban AI marka başlığı, alt tab ikonları (home/camera/calculator/chart/more).
+
+*Son güncelleme: mockup referanslarına göre UI yenilendi.*

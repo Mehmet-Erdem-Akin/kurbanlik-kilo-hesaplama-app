@@ -1,6 +1,12 @@
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Button, Card, ScreenScroll, Subtitle, Title } from "@/components/ui";
+import {
+  BrandHeader,
+  Button,
+  Card,
+  MenuRow,
+  ScreenScroll,
+} from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
 import { WEB_SITE_URL } from "@/config/env";
 import { colors } from "@/theme/colors";
@@ -8,14 +14,13 @@ import { colors } from "@/theme/colors";
 export default function MoreScreen() {
   const { user, loading, logout } = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
-  };
-
   return (
     <ScreenScroll>
-      <Title>Daha Fazla</Title>
-      <Subtitle>Hesap, paketler ve web sitesi bağlantıları.</Subtitle>
+      <BrandHeader />
+      <Text style={styles.pageTitle}>Daha Fazla</Text>
+      <Text style={styles.pageText}>
+        Hesap, paketler ve destek bağlantıları.
+      </Text>
 
       <Card style={styles.card}>
         {loading ? (
@@ -30,16 +35,16 @@ export default function MoreScreen() {
               Kalan kredi: {user.remainingCredits}
             </Text>
             <View style={styles.actions}>
-              <Button label="Hesabım" onPress={() => router.push("/account")} />
               <Button
-                label="Paketler"
-                variant="secondary"
-                onPress={() => router.push("/pricing")}
+                label="Hesabım"
+                icon="person-outline"
+                onPress={() => router.push("/account")}
               />
               <Button
-                label="Çıkış Yap"
-                variant="danger"
-                onPress={handleLogout}
+                label="Paketler"
+                icon="cart-outline"
+                variant="secondary"
+                onPress={() => router.push("/pricing")}
               />
             </View>
           </>
@@ -47,15 +52,18 @@ export default function MoreScreen() {
           <View style={styles.actions}>
             <Button
               label="Giriş Yap"
+              icon="log-in-outline"
               onPress={() => router.push("/auth/login")}
             />
             <Button
               label="Kayıt Ol"
+              icon="person-add-outline"
               variant="secondary"
               onPress={() => router.push("/auth/register")}
             />
             <Button
               label="Paketler"
+              icon="pricetag-outline"
               variant="ghost"
               onPress={() => router.push("/pricing")}
             />
@@ -64,49 +72,68 @@ export default function MoreScreen() {
       </Card>
 
       <Card style={styles.card}>
-        <Text style={styles.sectionTitle}>Web & destek</Text>
-        <Button
-          label="Web sitesini aç"
-          variant="secondary"
+        <MenuRow
+          icon="globe-outline"
+          title="Web sitesini aç"
+          subtitle="kurbanlikkilohesaplama.com"
           onPress={() => Linking.openURL(WEB_SITE_URL)}
         />
-        <Button
-          label="İletişim (e-posta)"
-          variant="ghost"
+        <MenuRow
+          icon="mail-outline"
+          title="Destek"
+          subtitle="Sorularınız için bize yazın"
           onPress={() =>
             Linking.openURL("mailto:mehmet.erdem.akin@outlook.com")
           }
         />
+        {user ? (
+          <MenuRow
+            icon="log-out-outline"
+            title="Çıkış Yap"
+            subtitle="Hesabınızdan güvenli çıkış"
+            danger
+            onPress={async () => {
+              await logout();
+            }}
+          />
+        ) : null}
       </Card>
     </ScreenScroll>
   );
 }
 
 const styles = StyleSheet.create({
+  pageTitle: {
+    marginTop: 16,
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  pageText: {
+    marginTop: 8,
+    color: colors.textMuted,
+    lineHeight: 21,
+  },
   card: {
     marginTop: 16,
-    gap: 10,
+    gap: 4,
   },
   name: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "800",
     color: colors.text,
   },
   muted: {
     color: colors.textMuted,
   },
   credits: {
-    marginTop: 4,
+    marginTop: 6,
+    marginBottom: 8,
     fontWeight: "700",
     color: colors.primaryDark,
   },
   actions: {
     marginTop: 8,
     gap: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.text,
   },
 });
