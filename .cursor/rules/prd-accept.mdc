@@ -1,0 +1,25 @@
+---
+description: Kullanıcı "tamam süper" ile onayladığında prd.md Yapıldı bölümünü güncelle
+globs:
+alwaysApply: true
+---
+
+# prd-accept
+
+## Trigger
+
+Bu kural yalnızca kullanıcı mesajı **"tamam süper"** cümlesiyle başladığında çalışır.
+Kullanıcı senin ürettiğin bir kodu / çıktıyı onayladığında tetiklenir.
+
+## Action
+
+1. Projede `prd.md` dosyasını aç.
+2. Dosya içinde `## Yapıldı` başlığını bul.
+3. En son onaylanan (kullanıcının "tamam süper" dediği) çıktının kısa özet bilgisini bu bölümde ara.
+4. Özet `## Yapıldı` listesinde yoksa listenin en altına ekle.
+5. Zaten varsa herhangi bir ekleme yapma.
+
+## Context
+
+- Amaç: yeni geliştirilen özelliklerin `prd.md` içinde onay sonrası takip edilmesi.
+- Yalnızca "tamam süper" ile başlayan mesajlarda uygula; diğer mesajlarda bu kuralı çalıştırma.
