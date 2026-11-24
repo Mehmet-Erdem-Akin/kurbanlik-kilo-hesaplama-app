@@ -1,22 +1,28 @@
 {
   "expo": {
-    "name": "Kurbanlık Kilo",
+    "name": "Kurban AI",
     "slug": "kurbanlik-kilo-hesaplama-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "kurbanlikkilo",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.kurbanlikkilo.app",
+      "supportsTablet": false,
+      "bundleIdentifier": "com.akintechstudio.kurbanlikkilo",
+      "appleTeamId": "L9XFYWS8GJ",
+      "buildNumber": "1",
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "Kurbanlık hayvan fotoğrafı çekmek için kamera erişimi gerekir.",
-        "NSPhotoLibraryUsageDescription": "Analiz için galeriden fotoğraf seçmek gerekir."
+        "NSPhotoLibraryUsageDescription": "Analiz için galeriden fotoğraf seçmek gerekir.",
+        "CFBundleAllowMixedLocalizations": true
       }
     },
     "android": {
-      "package": "com.kurbanlikkilo.app",
+      "package": "com.akintechstudio.kurbanlikkilo",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#F7F3EA",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -60,6 +66,7 @@
     },
     "extra": {
       "apiUrl": "https://kurbanlikkilohesaplama.com"
-    }
+    },
+    "owner": "mehmetea57"
   }
 }

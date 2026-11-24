@@ -9,7 +9,15 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "eas:init": "eas init",
+    "eas:build:preview": "eas build --profile preview",
+    "eas:build:preview:android": "eas build --profile preview --platform android",
+    "eas:build:preview:ios": "eas build --profile preview --platform ios",
+    "eas:build:production": "eas build --profile production",
+    "eas:build:simulator": "eas build --profile preview-simulator --platform ios",
+    "eas:submit:ios": "eas submit --platform ios --profile production",
+    "eas:submit:android": "eas submit --platform android --profile production"
   },
   "dependencies": {
     "@expo-google-fonts/manrope": "^0.4.3",
