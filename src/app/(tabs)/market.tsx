@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
-import { FileText, Leaf, RefreshCw, TrendingDown, TrendingUp } from "lucide-react-native";
+import { TrendingDown, TrendingUp } from "lucide-react-native";
 import { fetchMarketPrices } from "@/api/market";
 import {
   AlertBox,
+  AppIcon,
   BrandMark,
   Button,
   Card,
@@ -22,7 +23,17 @@ const AnimalCard = ({ animal }: { animal: MarketAnimal }) => {
     <Card style={styles.card}>
       <View style={styles.cardTop}>
         <View style={styles.animalIcon}>
-          <Leaf size={22} color={colors.primary} strokeWidth={2.1} />
+          <AppIcon
+            name={
+              animal.name.toLocaleLowerCase("tr").includes("koyun") ||
+              animal.name.toLocaleLowerCase("tr").includes("koç")
+                ? "sheep"
+                : animal.name.toLocaleLowerCase("tr").includes("keçi")
+                  ? "goat"
+                  : "cattle"
+            }
+            size={28}
+          />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.animalName}>{animal.name}</Text>
@@ -114,22 +125,19 @@ export default function MarketScreen() {
       </Text>
 
       <View style={styles.updateBar}>
-        <Text style={styles.updateText}>
-          Son güncelleme: {data ? formatDate(data.lastUpdated) : "—"}
-        </Text>
-        <Button
-          label="Güncelle"
-          icon={RefreshCw}
-          variant="sage"
-          onPress={handleRefresh}
-        />
+        <View style={styles.updateLeft}>
+          <AppIcon name="refresh" size={22} />
+          <Text style={styles.updateText}>
+            Son güncelleme: {data ? formatDate(data.lastUpdated) : "—"}
+          </Text>
+        </View>
+        <Button label="Güncelle" variant="sage" onPress={handleRefresh} />
       </View>
 
       {error ? <AlertBox message={error} /> : null}
 
       {!data ? (
         <EmptyState
-          icon={Leaf}
           title="Veri yok"
           description="Piyasa verileri şu an gösterilemiyor."
         />
@@ -141,7 +149,7 @@ export default function MarketScreen() {
 
           <Card style={styles.notes}>
             <View style={styles.notesHeader}>
-              <FileText size={18} color={colors.primary} strokeWidth={2.1} />
+              <AppIcon name="report" size={22} />
               <Text style={styles.notesTitle}>Piyasa Notları</Text>
             </View>
             {data.marketInsights.map((insight) => (
@@ -173,6 +181,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: spacing.sm,
+  },
+  updateLeft: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
   },
   updateText: {

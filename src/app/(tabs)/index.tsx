@@ -2,15 +2,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { Calculator, Camera, Leaf } from "lucide-react-native";
 import {
-  BarChart3,
-  Calculator,
-  Camera,
-  Leaf,
-  ShieldCheck,
-  Zap,
-} from "lucide-react-native";
-import {
+  AppIcon,
   BrandMark,
   Button,
   Card,
@@ -131,19 +125,19 @@ export default function HomeScreen() {
       <Text style={styles.sectionTitle}>Ana hizmetler</Text>
       <View style={styles.featureRow}>
         <IconTile
-          icon={Camera}
+          iconName="camera-ai"
           title="AI Analiz"
           text="Fotoğrafla kilo ve hisse tahmini"
           onPress={() => router.push("/analyze")}
         />
         <IconTile
-          icon={Calculator}
+          iconName="calculator"
           title="Manuel"
           text="Canlı kilo ile anlık hesap"
           onPress={() => router.push("/calculator")}
         />
         <IconTile
-          icon={BarChart3}
+          iconName="market"
           title="Piyasa"
           text="Güncel fiyat referansları"
           onPress={() => router.push("/market")}
@@ -152,26 +146,28 @@ export default function HomeScreen() {
 
       <Text style={styles.sectionTitle}>Neden Kurban AI?</Text>
       <View style={styles.whyRow}>
-        {[
-          {
-            icon: Zap,
-            title: "Hızlı sonuç",
-            text: "Saniyeler içinde tahmin",
-          },
-          {
-            icon: Leaf,
-            title: "Karkas & hisse",
-            text: "Canlı kilodan randıman",
-          },
-          {
-            icon: ShieldCheck,
-            title: "Güvenilir rehber",
-            text: "Güncel referanslarla",
-          },
-        ].map((item) => (
+        {(
+          [
+            {
+              iconName: "sparkles" as const,
+              title: "Hızlı sonuç",
+              text: "Saniyeler içinde tahmin",
+            },
+            {
+              iconName: "share-pie" as const,
+              title: "Karkas & hisse",
+              text: "Canlı kilodan randıman",
+            },
+            {
+              iconName: "shield-check" as const,
+              title: "Güvenilir rehber",
+              text: "Güncel referanslarla",
+            },
+          ] as const
+        ).map((item) => (
           <Card key={item.title} style={styles.whyCard}>
             <View style={styles.whyIcon}>
-              <item.icon size={18} color={colors.primary} strokeWidth={2.1} />
+              <AppIcon name={item.iconName} size={26} />
             </View>
             <Text style={styles.whyTitle}>{item.title}</Text>
             <Text style={styles.whyText}>{item.text}</Text>

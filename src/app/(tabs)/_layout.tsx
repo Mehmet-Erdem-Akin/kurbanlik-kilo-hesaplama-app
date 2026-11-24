@@ -1,16 +1,23 @@
 import { Tabs } from "expo-router";
-import {
-  BarChart3,
-  Calculator,
-  Camera,
-  Ellipsis,
-  Home,
-} from "lucide-react-native";
-import type { ColorValue } from "react-native";
+import { AppIcon, type AppIconName } from "@/components/AppIcon";
 import { colors, dimensions, fonts } from "@/theme/theme";
 
-const toColor = (color: ColorValue) =>
-  (color as string | null) ?? colors.disabled;
+const TabGlyph = ({
+  name,
+  focused,
+  size,
+}: {
+  name: AppIconName;
+  focused: boolean;
+  size: number;
+}) => (
+  <AppIcon
+    name={name}
+    size={size}
+    opacity={focused ? 1 : 0.45}
+    accessibilityLabel={name}
+  />
+);
 
 export default function TabsLayout() {
   return (
@@ -36,8 +43,8 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Ana Sayfa",
-          tabBarIcon: ({ color, size }) => (
-            <Home size={size} color={toColor(color)} strokeWidth={2.1} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabGlyph name="home" focused={focused} size={size} />
           ),
         }}
       />
@@ -45,8 +52,8 @@ export default function TabsLayout() {
         name="analyze"
         options={{
           title: "Analiz",
-          tabBarIcon: ({ color, size }) => (
-            <Camera size={size} color={toColor(color)} strokeWidth={2.1} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabGlyph name="camera-ai" focused={focused} size={size} />
           ),
         }}
       />
@@ -54,8 +61,8 @@ export default function TabsLayout() {
         name="calculator"
         options={{
           title: "Hesapla",
-          tabBarIcon: ({ color, size }) => (
-            <Calculator size={size} color={toColor(color)} strokeWidth={2.1} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabGlyph name="calculator" focused={focused} size={size} />
           ),
         }}
       />
@@ -63,8 +70,8 @@ export default function TabsLayout() {
         name="market"
         options={{
           title: "Piyasa",
-          tabBarIcon: ({ color, size }) => (
-            <BarChart3 size={size} color={toColor(color)} strokeWidth={2.1} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabGlyph name="market" focused={focused} size={size} />
           ),
         }}
       />
@@ -72,8 +79,8 @@ export default function TabsLayout() {
         name="more"
         options={{
           title: "Daha Fazla",
-          tabBarIcon: ({ color, size }) => (
-            <Ellipsis size={size} color={toColor(color)} strokeWidth={2.1} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabGlyph name="more" focused={focused} size={size} />
           ),
         }}
       />

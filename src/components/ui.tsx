@@ -22,8 +22,10 @@ import {
   typography,
 } from "@/theme/theme";
 import { BrandMark } from "@/components/BrandMark";
+import { AppIcon, type AppIconName } from "@/components/AppIcon";
 
-export { BrandMark };
+export { BrandMark, AppIcon };
+export type { AppIconName };
 
 export const Screen = ({
   children,
@@ -241,16 +243,20 @@ export const Field = ({
   label,
   error,
   icon: Icon,
+  iconName,
   ...props
 }: TextInputProps & {
   label: string;
   error?: string;
   icon?: LucideIcon;
+  iconName?: AppIconName;
 }) => (
   <View style={styles.field}>
     <Text style={styles.fieldLabel}>{label}</Text>
     <View style={[styles.inputWrap, error ? styles.inputError : null]}>
-      {Icon ? (
+      {iconName ? (
+        <AppIcon name={iconName} size={20} style={styles.inputIcon} />
+      ) : Icon ? (
         <Icon
           size={18}
           color={colors.textSecondary}
@@ -395,11 +401,13 @@ export const Chip = ({
   selected,
   onPress,
   icon: Icon,
+  iconName,
 }: {
   label: string;
   selected?: boolean;
   onPress: () => void;
   icon?: LucideIcon;
+  iconName?: AppIconName;
 }) => (
   <Pressable
     accessibilityRole="button"
@@ -408,7 +416,9 @@ export const Chip = ({
     onPress={onPress}
     style={[styles.chip, selected && styles.chipSelected]}
   >
-    {Icon ? (
+    {iconName ? (
+      <AppIcon name={iconName} size={18} opacity={selected ? 1 : 0.85} />
+    ) : Icon ? (
       <Icon
         size={16}
         color={selected ? colors.white : colors.primary}
@@ -423,11 +433,13 @@ export const Chip = ({
 
 export const IconTile = ({
   icon: Icon,
+  iconName,
   title,
   text,
   onPress,
 }: {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  iconName?: AppIconName;
   title: string;
   text: string;
   onPress?: () => void;
@@ -439,7 +451,11 @@ export const IconTile = ({
     style={styles.iconTile}
   >
     <View style={styles.iconTileIcon}>
-      <Icon size={22} color={colors.primary} strokeWidth={2.1} />
+      {iconName ? (
+        <AppIcon name={iconName} size={28} />
+      ) : Icon ? (
+        <Icon size={22} color={colors.primary} strokeWidth={2.1} />
+      ) : null}
     </View>
     <Text style={styles.iconTileTitle}>{title}</Text>
     <Text style={styles.iconTileText}>{text}</Text>
@@ -448,12 +464,14 @@ export const IconTile = ({
 
 export const MenuRow = ({
   icon: Icon,
+  iconName,
   title,
   subtitle,
   onPress,
   danger,
 }: {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  iconName?: AppIconName;
   title: string;
   subtitle: string;
   onPress: () => void;
@@ -466,11 +484,15 @@ export const MenuRow = ({
     style={styles.menuRow}
   >
     <View style={[styles.menuIcon, danger && styles.menuIconDanger]}>
-      <Icon
-        size={18}
-        color={danger ? colors.error : colors.primary}
-        strokeWidth={2.1}
-      />
+      {iconName ? (
+        <AppIcon name={iconName} size={22} />
+      ) : Icon ? (
+        <Icon
+          size={18}
+          color={danger ? colors.error : colors.primary}
+          strokeWidth={2.1}
+        />
+      ) : null}
     </View>
     <View style={styles.menuCopy}>
       <Text style={[styles.menuTitle, danger && { color: colors.error }]}>

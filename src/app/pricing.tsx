@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Camera, Gift, Grid2X2, Layers, ShoppingCart, Sparkles } from "lucide-react-native";
+import { ShoppingCart } from "lucide-react-native";
 import { ApiError } from "@/api/client";
 import { createShopierPayment, openShopierCheckout } from "@/api/payments";
 import {
   AlertBox,
+  AppIcon,
   BrandMark,
   Button,
   Card,
@@ -76,7 +77,7 @@ export default function PricingScreen() {
 
       <Card style={styles.welcome}>
         <View style={styles.welcomeRow}>
-          <Gift size={22} color={colors.primary} strokeWidth={2.1} />
+          <AppIcon name="gift" size={28} />
           <View style={{ flex: 1 }}>
             <Text style={styles.welcomeTitle}>Hoş geldin</Text>
             <Text style={styles.welcomeText}>
@@ -93,17 +94,22 @@ export default function PricingScreen() {
         >
           {pkg.badge ? (
             <View style={styles.badge}>
-              <Sparkles size={12} color={colors.white} strokeWidth={2.2} />
+              <AppIcon name="sparkles" size={14} />
               <Text style={styles.badgeText}>Önerilen</Text>
             </View>
           ) : null}
           <View style={styles.packageTop}>
             <View style={styles.packageIcon}>
-              {pkg.id === "standard" ? (
-                <Sparkles size={20} color={colors.primary} strokeWidth={2.1} />
-              ) : (
-                <Layers size={20} color={colors.primary} strokeWidth={2.1} />
-              )}
+              <AppIcon
+                name={
+                  pkg.id === "standard"
+                    ? "crown"
+                    : pkg.id === "professional"
+                      ? "package"
+                      : "coins"
+                }
+                size={26}
+              />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.packageName}>{pkg.name}</Text>
@@ -139,20 +145,23 @@ export default function PricingScreen() {
 
       <View style={styles.usageRow}>
         <Card style={styles.usageCard}>
-          <Camera size={18} color={colors.primary} strokeWidth={2.1} />
+          <AppIcon name="camera-ai" size={26} />
           <Text style={styles.usageTitle}>1 analiz = 1 kredi</Text>
           <Text style={styles.usageText}>Fotoğrafla AI analizi</Text>
         </Card>
         <Card style={styles.usageCard}>
-          <Grid2X2 size={18} color={colors.primary} strokeWidth={2.1} />
+          <AppIcon name="yield" size={26} />
           <Text style={styles.usageTitle}>Detaylı tablo = 1 kredi</Text>
           <Text style={styles.usageText}>Randıman senaryoları</Text>
         </Card>
       </View>
 
-      <Text style={styles.secure}>
-        Güvenli ödeme · Shopier ile yönlendirme
-      </Text>
+      <View style={styles.secureRow}>
+        <AppIcon name="shield-check" size={18} />
+        <Text style={styles.secure}>
+          Güvenli ödeme · Shopier ile yönlendirme
+        </Text>
+      </View>
     </ScreenScroll>
   );
 }
@@ -223,8 +232,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   packageIcon: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: radius.md,
     backgroundColor: colors.sage,
     alignItems: "center",
@@ -273,9 +282,15 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.textSecondary,
   },
+  secureRow: {
+    marginTop: spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+  },
   secure: {
     ...typography.caption,
-    marginTop: spacing.lg,
     textAlign: "center",
     color: colors.textSecondary,
   },

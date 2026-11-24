@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import {
-  Camera,
-  HelpCircle,
-  Layers,
-  LogOut,
-  Plus,
-  Tag,
-  User,
-} from "lucide-react-native";
+import { Camera, Plus } from "lucide-react-native";
 import { fetchHistory } from "@/api/history";
 import {
   AlertBox,
+  AppIcon,
   BrandMark,
   Button,
   Card,
@@ -77,7 +70,7 @@ export default function AccountScreen() {
       <Card style={styles.profileCard}>
         <View style={styles.profileRow}>
           <View style={styles.avatar}>
-            <User size={22} color={colors.primary} strokeWidth={2.1} />
+            <AppIcon name="profile" size={28} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.name}>
@@ -89,7 +82,7 @@ export default function AccountScreen() {
 
         <View style={styles.creditRow}>
           <ResultBanner style={styles.creditBox}>
-            <Layers size={18} color={colors.sage} strokeWidth={2.1} />
+            <AppIcon name="coins" size={22} />
             <Text style={styles.creditLabel}>Kalan kredi</Text>
             <Text style={styles.creditValue}>{user.remainingCredits}</Text>
           </ResultBanner>
@@ -105,19 +98,19 @@ export default function AccountScreen() {
 
       <Card style={styles.menuCard}>
         <MenuRow
-          icon={Tag}
+          iconName="package"
           title="Paketler"
           subtitle="Kredi paketlerini incele ve satın al"
           onPress={() => router.push("/pricing")}
         />
         <MenuRow
-          icon={HelpCircle}
+          iconName="support"
           title="Destek"
           subtitle="Sorularınız için bize ulaşın"
           onPress={() => router.push("/more")}
         />
         <MenuRow
-          icon={LogOut}
+          iconName="logout"
           title="Çıkış Yap"
           subtitle="Hesabınızdan güvenli çıkış"
           danger
@@ -152,7 +145,7 @@ export default function AccountScreen() {
           return (
             <Card key={item.id} style={styles.historyCard}>
               <View style={styles.historyIcon}>
-                <Camera size={18} color={colors.primary} strokeWidth={2.1} />
+                <AppIcon name="report" size={24} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.historyAnimal}>

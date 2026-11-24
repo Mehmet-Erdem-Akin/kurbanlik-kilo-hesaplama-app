@@ -3,15 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import {
-  Camera,
-  FileText,
-  Images,
-  MapPin,
-  Plus,
-  Scale,
-  User,
-} from "lucide-react-native";
+import { Camera, User } from "lucide-react-native";
 import {
   analyzeImages,
   getAnalyzeErrorMessage,
@@ -19,6 +11,7 @@ import {
 import { saveHistory } from "@/api/history";
 import {
   AlertBox,
+  AppIcon,
   BrandMark,
   Button,
   Card,
@@ -165,13 +158,11 @@ export default function AnalyzeScreen() {
         />
         <Button
           label="Galeri"
-          icon={Images}
           variant="secondary"
           flex
           onPress={() => handlePickImages(false)}
         />
       </View>
-
       <Text style={styles.slotHint}>
         En fazla 4 fotoğraf ekleyin. Farklı açılar doğruluğu artırır.
       </Text>
@@ -200,7 +191,7 @@ export default function AnalyzeScreen() {
                 <Image source={{ uri: image }} style={styles.slotImage} />
               ) : (
                 <>
-                  <Plus size={20} color={colors.freshGreen} strokeWidth={2.2} />
+                  <AppIcon name="photo-add" size={28} />
                   <Text style={styles.slotLabel}>{slot + 1}. Fotoğraf</Text>
                 </>
               )}
@@ -212,7 +203,7 @@ export default function AnalyzeScreen() {
       <View style={styles.chipRow}>
         <Chip
           label="Büyükbaş"
-          icon={User}
+          iconName="cattle"
           selected={additionalInfo.animalCategory === "büyükbaş"}
           onPress={() =>
             setAdditionalInfo((current) => ({
@@ -223,7 +214,7 @@ export default function AnalyzeScreen() {
         />
         <Chip
           label="Küçükbaş"
-          icon={Scale}
+          iconName="sheep"
           selected={additionalInfo.animalCategory === "küçükbaş"}
           onPress={() =>
             setAdditionalInfo((current) => ({
@@ -236,7 +227,7 @@ export default function AnalyzeScreen() {
 
       <Field
         label="Tür / cins"
-        icon={User}
+        iconName="cattle"
         value={additionalInfo.animalType || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, animalType: text }))
@@ -245,7 +236,7 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Tahmini kilo (kg)"
-        icon={Scale}
+        iconName="weight"
         value={additionalInfo.weight || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, weight: text }))
@@ -255,7 +246,7 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Bölge"
-        icon={MapPin}
+        iconName="location"
         value={additionalInfo.region || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, region: text }))
@@ -264,7 +255,7 @@ export default function AnalyzeScreen() {
       />
       <Field
         label="Not"
-        icon={FileText}
+        iconName="report"
         value={additionalInfo.specialNotes || ""}
         onChangeText={(text) =>
           setAdditionalInfo((current) => ({ ...current, specialNotes: text }))

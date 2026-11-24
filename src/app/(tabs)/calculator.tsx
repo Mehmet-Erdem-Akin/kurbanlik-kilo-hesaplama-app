@@ -1,18 +1,12 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import {
-  ArrowRightLeft,
-  Lock,
-  LockOpen,
-  Ruler,
-  Scale,
-  Wallet,
-} from "lucide-react-native";
+import { LockOpen } from "lucide-react-native";
 import { consumeCredit } from "@/api/credits";
 import { ApiError } from "@/api/client";
 import {
   AlertBox,
+  AppIcon,
   BrandMark,
   Button,
   Card,
@@ -111,7 +105,7 @@ export default function CalculatorScreen() {
       <Card style={styles.formCard}>
         <Field
           label="Canlı kilo"
-          icon={Scale}
+          iconName="weight"
           value={liveWeight}
           onChangeText={(text) => {
             setLiveWeight(text);
@@ -121,7 +115,7 @@ export default function CalculatorScreen() {
         />
         <Field
           label="Kg et fiyatı"
-          icon={Wallet}
+          iconName="coins"
           value={meatPrice}
           onChangeText={(text) => {
             setMeatPrice(text);
@@ -134,6 +128,7 @@ export default function CalculatorScreen() {
         <View style={styles.chipRow}>
           <Chip
             label="Erkek · %60"
+            iconName="cattle"
             selected={profile === "male"}
             onPress={() => {
               setProfile("male");
@@ -142,6 +137,7 @@ export default function CalculatorScreen() {
           />
           <Chip
             label="Dişi · %53"
+            iconName="sheep"
             selected={profile === "female"}
             onPress={() => {
               setProfile("female");
@@ -153,7 +149,7 @@ export default function CalculatorScreen() {
         <Text style={styles.label}>Ölçü ile tahmin</Text>
         <Field
           label="Göğüs çevresi (cm)"
-          icon={Ruler}
+          iconName="measure"
           value={chest}
           onChangeText={setChest}
           keyboardType="numeric"
@@ -161,7 +157,7 @@ export default function CalculatorScreen() {
         />
         <Field
           label="Gövde uzunluğu (cm)"
-          icon={ArrowRightLeft}
+          iconName="measure"
           value={length}
           onChangeText={setLength}
           keyboardType="numeric"
@@ -189,10 +185,13 @@ export default function CalculatorScreen() {
 
       <Card style={styles.lockCard}>
         <View style={styles.lockHeader}>
-          <Text style={styles.lockTitle}>Detaylı randıman tablosu</Text>
+          <View style={styles.lockTitleRow}>
+            <AppIcon name="yield" size={22} />
+            <Text style={styles.lockTitle}>Detaylı randıman tablosu</Text>
+          </View>
           {!showTable ? (
             <View style={styles.lockPill}>
-              <Lock size={12} color={colors.primary} strokeWidth={2.2} />
+              <AppIcon name="lock" size={14} />
               <Text style={styles.lockPillText}>Kilitli</Text>
             </View>
           ) : null}
@@ -313,6 +312,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  lockTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    flex: 1,
   },
   lockTitle: {
     ...typography.cardTitle,

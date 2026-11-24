@@ -1,6 +1,6 @@
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
-import { Globe, LogIn, LogOut, Mail, Tag, UserPlus } from "lucide-react-native";
+import { Globe, LogIn, UserPlus } from "lucide-react-native";
 import {
   BrandMark,
   Button,
@@ -42,7 +42,6 @@ export default function MoreScreen() {
               />
               <Button
                 label="Paketler"
-                icon={Tag}
                 variant="secondary"
                 onPress={() => router.push("/pricing")}
               />
@@ -63,7 +62,6 @@ export default function MoreScreen() {
             />
             <Button
               label="Paketler"
-              icon={Tag}
               variant="ghost"
               onPress={() => router.push("/pricing")}
             />
@@ -73,13 +71,27 @@ export default function MoreScreen() {
 
       <Card style={styles.card}>
         <MenuRow
+          iconName="profile"
+          title="Hesabım"
+          subtitle="Profil ve kredi bilginiz"
+          onPress={() =>
+            user ? router.push("/account") : router.push("/auth/login")
+          }
+        />
+        <MenuRow
+          iconName="package"
+          title="Kredi paketleri"
+          subtitle="Analiz kredisi satın alın"
+          onPress={() => router.push("/pricing")}
+        />
+        <MenuRow
           icon={Globe}
           title="Web sitesini aç"
           subtitle="kurbanlikkilohesaplama.com"
           onPress={() => Linking.openURL(WEB_SITE_URL)}
         />
         <MenuRow
-          icon={Mail}
+          iconName="support"
           title="Destek"
           subtitle="Sorularınız için bize yazın"
           onPress={() =>
@@ -88,7 +100,7 @@ export default function MoreScreen() {
         />
         {user ? (
           <MenuRow
-            icon={LogOut}
+            iconName="logout"
             title="Çıkış Yap"
             subtitle="Hesabınızdan güvenli çıkış"
             danger
