@@ -28,26 +28,32 @@ export default function HomeScreen() {
     <ScreenScroll>
       <BrandMark />
 
-      <View style={styles.hero}>
+      <View style={styles.hero} accessibilityLabel="Kurbanlık büyükbaş görseli">
+        <Image
+          source={require("../../../assets/images/heroes/cow-hero.jpg")}
+          style={styles.heroImage}
+          contentFit="cover"
+          contentPosition="right center"
+          transition={200}
+        />
+        <LinearGradient
+          colors={[
+            "rgba(247,243,234,0.98)",
+            "rgba(247,243,234,0.88)",
+            "rgba(247,243,234,0.35)",
+            "rgba(247,243,234,0)",
+          ]}
+          locations={[0, 0.32, 0.58, 0.82]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.heroFade}
+        />
         <View style={styles.heroCopy}>
           <Text style={styles.heroTitle}>Kurbanlık Kilo ve Hisse Hesabı</Text>
           <Text style={styles.heroText}>
             Fotoğraf yükleyerek AI analizi yapın veya manuel veri girerek karkas
             ve hisse maliyetini hesaplayın.
           </Text>
-        </View>
-        <View style={styles.heroMedia}>
-          <Image
-            source={require("../../../assets/images/heroes/cow-hero.jpg")}
-            style={styles.heroImage}
-            contentFit="cover"
-            transition={200}
-            accessibilityLabel="Kurbanlık büyükbaş görseli"
-          />
-          <LinearGradient
-            colors={["rgba(247,243,234,0)", "rgba(247,243,234,0.92)"]}
-            style={styles.heroFade}
-          />
         </View>
       </View>
 
@@ -180,32 +186,41 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   hero: {
-    marginTop: spacing.xl,
-    gap: spacing.md,
+    marginTop: spacing.lg,
+    height: 220,
+    borderRadius: radius.xl,
+    overflow: "hidden",
+    backgroundColor: colors.background,
+    ...shadows.soft,
+  },
+  heroImage: {
+    ...StyleSheet.absoluteFill,
+  },
+  heroFade: {
+    ...StyleSheet.absoluteFill,
   },
   heroCopy: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "58%",
+    justifyContent: "center",
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     gap: spacing.sm,
   },
   heroTitle: {
-    ...typography.hero,
+    fontFamily: fonts.extraBold,
+    fontSize: 26,
+    lineHeight: 32,
     color: colors.primary,
   },
   heroText: {
     ...typography.body,
+    fontSize: 13,
+    lineHeight: 19,
     color: colors.textSecondary,
-  },
-  heroMedia: {
-    height: 160,
-    borderRadius: radius.xl,
-    overflow: "hidden",
-    ...shadows.soft,
-  },
-  heroImage: {
-    width: "100%",
-    height: "100%",
-  },
-  heroFade: {
-    ...StyleSheet.absoluteFill,
   },
   ctaRow: {
     marginTop: spacing.xl,
