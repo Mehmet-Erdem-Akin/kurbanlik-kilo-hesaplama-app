@@ -1,0 +1,72 @@
+{
+  "expo": {
+    "name": "Kurban AI",
+    "slug": "kurbanlik-kilo-hesaplama-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "kurbanlikkilo",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.akintechstudio.kurbanlikkilo",
+      "appleTeamId": "L9XFYWS8GJ",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Kurbanlık hayvan fotoğrafı çekmek için kamera erişimi gerekir.",
+        "NSPhotoLibraryUsageDescription": "Analiz için galeriden fotoğraf seçmek gerekir.",
+        "CFBundleAllowMixedLocalizations": true
+      }
+    },
+    "android": {
+      "package": "com.akintechstudio.kurbanlikkilo",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F3EA",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F3EA"
+        }
+      ],
+      "expo-secure-store",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Analiz için galeriden fotoğraf seçmek gerekir.",
+          "cameraPermission": "Kurbanlık hayvan fotoğrafı çekmek için kamera erişimi gerekir."
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "https://kurbanlikkilohesaplama.com"
+    },
+    "owner": "mehmetea57"
+  }
+}
