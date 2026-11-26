@@ -23,7 +23,7 @@ Steps:
 3. Calculator: enter live weight and meat price → see carcass value and share price. Unlock detailed yield table with 1 credit when logged in.
 4. Market: view livestock price references (network required).
 5. More / Account: login or register, view remaining credits, open credit packs (Shopier redirect in system browser), logout.
-6. Privacy / support: website https://kurbanlikkilohesaplama.com and support email in More.
+6. Privacy / support: Privacy Policy (English) https://kurbanlikkilohesaplama.com/privacy/en — Turkish: /privacy — website https://kurbanlikkilohesaplama.com and support email in More.
 
 Demo account (keep active during review — create one before submission if blank):
 Email: store-review@akintechstudio.com
@@ -75,7 +75,8 @@ Sonuçlar ön tahmindir.
 
 - [ ] Notes alanına English metin yapıştırıldı
 - [ ] Demo hesap production’da çalışıyor
-- [ ] Privacy Policy URL canlı
+- [ ] Privacy Policy URL canlı (EN: /privacy/en)
+- [ ] ASC Privacy Policy field = https://kurbanlikkilohesaplama.com/privacy/en
 - [ ] Camera / Photos usage strings doğru
 - [ ] IAP yok → ASC’de IAP ürünü eklemeyin
 - [ ] Shopier / kredi akışı review hesabında test edildi

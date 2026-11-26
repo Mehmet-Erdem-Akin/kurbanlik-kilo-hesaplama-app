@@ -192,8 +192,8 @@ Thanks for your feedback.
 ```
 
 **Privacy Policy URL**  
-`https://kurbanlikkilohesaplama.com/privacy`  
-(veya canlı gizlilik sayfanız)
+- App Store Connect (önerilen, review EN): `https://kurbanlikkilohesaplama.com/privacy/en`  
+- Türkçe: `https://kurbanlikkilohesaplama.com/privacy`
 
 **Support URL**  
 `https://akintechstudio.com`  
@@ -276,7 +276,7 @@ Tam metin: [`APP_REVIEW_NOTES.md`](./APP_REVIEW_NOTES.md)
 |------|--------|
 | Support URL | `https://akintechstudio.com` |
 | Marketing URL | `https://kurbanlikkilohesaplama.com` |
-| Privacy Policy | `https://kurbanlikkilohesaplama.com/privacy` |
+| Privacy Policy | `https://kurbanlikkilohesaplama.com/privacy/en` (TR: `/privacy`) |
 | Copyright | `© Akin Tech Studio` |
 | Developer name | Akin Tech Studio |
 | Bundle ID (iOS) | `com.akintechstudio.kurbanai` |
