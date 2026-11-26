@@ -17,7 +17,7 @@ Görseller: `app-store/assets/` · Connect boyutları: `app-store/apple-connect/
 **Kurallar**
 - Primary language = **Turkish** (Türkiye’de `Kurban AI`)
 - English localization: store adı **`Qurban AI`** (uluslararası en bilinen yazım) + açıklamada *livestock / Qurban animal weight*
-- Bundle ID tek kalır: `com.akintechstudio.kurbanlikkilo`
+- Bundle ID tek kalır: `com.akintechstudio.kurbanai`
 - Cihaz ikon altı adı tek kalır: **Kurban AI** (`CFBundleDisplayName`) — store listing adı lokalizasyona göre değişebilir
 - Uygulama içi UI şu an Türkçe; store lokalizasyonu ≠ in-app i18n
 
@@ -279,8 +279,8 @@ Tam metin: [`APP_REVIEW_NOTES.md`](./APP_REVIEW_NOTES.md)
 | Privacy Policy | `https://kurbanlikkilohesaplama.com/privacy` |
 | Copyright | `© Akin Tech Studio` |
 | Developer name | Akin Tech Studio |
-| Bundle ID (iOS) | `com.akintechstudio.kurbanlikkilo` |
-| Package (Android) | `com.akintechstudio.kurbanlikkilo` |
+| Bundle ID (iOS) | `com.akintechstudio.kurbanai` |
+| Package (Android) | `com.akintechstudio.kurbanai` |
 | Apple Team ID | `L9XFYWS8GJ` |
 
 ---

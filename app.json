@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.akintechstudio.kurbanlikkilo",
+      "bundleIdentifier": "com.akintechstudio.kurbanai",
       "appleTeamId": "L9XFYWS8GJ",
       "buildNumber": "1",
       "infoPlist": {
@@ -22,7 +22,7 @@
       }
     },
     "android": {
-      "package": "com.akintechstudio.kurbanlikkilo",
+      "package": "com.akintechstudio.kurbanai",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#F7F3EA",

@@ -41,8 +41,8 @@ Yerel web backend için: `EXPO_PUBLIC_API_URL=http://localhost:3000` (cihazda ma
 
 **Identifiers**
 
-- iOS: `com.akintechstudio.kurbanlikkilo`
-- Android: `com.akintechstudio.kurbanlikkilo`
+- iOS: `com.akintechstudio.kurbanai`
+- Android: `com.akintechstudio.kurbanai`
 - Apple Team ID: `L9XFYWS8GJ`
 - Expo owner: `mehmetea57`
 
