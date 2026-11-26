@@ -42,3 +42,5 @@ Bu depo, [kurban-ai](https://github.com/Mehmet-Erdem-Akin/kurban-ai) web uygulam
 - Analyze `RATE_LIMITED` hata mesajı desteği
 - Store lokalizasyon politikası: TR `Kurban AI` (Türkiye) + EN `Qurban AI` (yurtdışı)
 - Bundle / package ID: `com.akintechstudio.kurbanai`
+- ASC App ID (`ascAppId`): `6839741409`
+- Privacy EN URL: `/privacy/en` (App Review için)
