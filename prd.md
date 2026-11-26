@@ -44,3 +44,4 @@ Bu depo, [kurban-ai](https://github.com/Mehmet-Erdem-Akin/kurban-ai) web uygulam
 - Bundle / package ID: `com.akintechstudio.kurbanai`
 - ASC App ID (`ascAppId`): `6839741409`
 - Privacy EN URL: `/privacy/en` (App Review için)
+- Store icon (brand logo) + iPhone 6.7" screenshots 1290×2796
