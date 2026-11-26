@@ -89,6 +89,8 @@ export const getAnalyzeErrorMessage = (
       return "Fotoğraf analizi başarısız oldu. Farklı bir fotoğraf deneyin.";
     case "API_ERROR":
       return "Yapay zeka servisinde geçici bir sorun oluştu. Lütfen tekrar deneyin.";
+    case "RATE_LIMITED":
+      return "Çok fazla analiz isteği gönderildi. Lütfen biraz sonra tekrar deneyin.";
     default:
       return "Analiz sırasında bir hata oluştu.";
   }

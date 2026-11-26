@@ -28,8 +28,6 @@ Bu depo, [kurban-ai](https://github.com/Mehmet-Erdem-Akin/kurban-ai) web uygulam
 
 ## Yapılacaklar
 
-- [ ] Web auth yanıtına `token` alanı (mobil Bearer oturumu için)
-- [ ] Web `getCurrentUser` içinde `Authorization: Bearer` desteği
 - [ ] Push bildirimleri
 - [ ] Offline manuel hesap önbelleği
 - [ ] Analiz PDF paylaşımı (mobil)
@@ -40,3 +38,5 @@ Bu depo, [kurban-ai](https://github.com/Mehmet-Erdem-Akin/kurban-ai) web uygulam
 - Ortak backend API istemcisi (auth, analyze, market, history, credits, Shopier)
 - Ana ekranlar: Analiz, Hesapla, Piyasa, Hesap, Paketler
 - `prd-accept` Cursor kuralı eklendi
+- Backend imzalı oturum + Bearer `getCurrentUser` ile mobil uyumu (login/register `token`)
+- Analyze `RATE_LIMITED` hata mesajı desteği
