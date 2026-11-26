@@ -34,10 +34,12 @@ ASC’ye yüklemeden önce Simulator’dan native çözünürlükte yeniden çek
 ## Connect adımları
 
 1. App Store Connect → uygulama → **App Store** sekmesi  
-2. **App Icon** → `icon/AppIcon-1024.png`  
-3. iPhone screenshot slotuna **6.9"** veya **6.7"** setini yükle  
-4. Metinler için `../LISTING.md`  
-5. Review notları için `../APP_REVIEW_NOTES.md`
+2. Primary Language: **Turkish** (Türkiye)  
+3. **Localizations** → **English (U.S.)** ekle (yurtdışı)  
+4. **App Icon** → `icon/AppIcon-1024.png`  
+5. iPhone screenshot slotuna **6.9"** veya **6.7"** setini yükle (TR + EN lokalizasyonlarına)  
+6. Metinler için `../LISTING.md` (TR / EN blokları)  
+7. Review notları için `../APP_REVIEW_NOTES.md`
 
 ## App Review
 

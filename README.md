@@ -63,6 +63,8 @@ npm run eas:submit:ios
 
 Listing metinleri ve checklist: [`app-store/LISTING.md`](./app-store/LISTING.md).
 
+**Store dilleri:** Türkiye → `Kurban AI` (TR), yurtdışı → `Qurban AI` (EN). Detay: `app-store/LISTING.md`.
+
 ## Yapı
 
 ```
