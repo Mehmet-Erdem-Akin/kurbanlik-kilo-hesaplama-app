@@ -12,13 +12,13 @@ Görseller: `app-store/assets/` · Connect boyutları: `app-store/apple-connect/
 | Hedef | Store dili | App Name | Subtitle / Short |
 |-------|------------|----------|------------------|
 | Türkiye | Türkçe (Primary) | `Kurban AI` | `Fotoğrafla kilo ve hisse hesabı` |
-| Yurtdışı / diğer ülkeler | English (U.S.) | `Kurban AI` | `AI weight & share estimates` |
+| Yurtdışı / diğer ülkeler | English (U.S.) | `Qurban AI` | `Livestock weight & share AI` |
 
 **Kurallar**
-- Primary language = **Turkish** (Türkiye App Store’da TR listing görünür)
-- English localization eklenince diğer ülkelerde EN listing görünür
+- Primary language = **Turkish** (Türkiye’de `Kurban AI`)
+- English localization: store adı **`Qurban AI`** (uluslararası en bilinen yazım) + açıklamada *livestock / Qurban animal weight*
 - Bundle ID tek kalır: `com.akintechstudio.kurbanlikkilo`
-- Cihaz ikon altı adı (`app.json` → `name`) tek: **Kurban AI** (store listing adı ülkeden bağımsız da aynı markayı korur)
+- Cihaz ikon altı adı tek kalır: **Kurban AI** (`CFBundleDisplayName`) — store listing adı lokalizasyona göre değişebilir
 - Uygulama içi UI şu an Türkçe; store lokalizasyonu ≠ in-app i18n
 
 ### App Store Connect — nasıl eklenir
@@ -42,8 +42,8 @@ Görseller: `app-store/assets/` · Connect boyutları: `app-store/apple-connect/
 
 | Alan | Türkçe (TR) | English (abroad) |
 |------|-------------|------------------|
-| Name / Title | Kurban AI | Kurban AI |
-| Subtitle / Short | Fotoğrafla kilo ve hisse hesabı | AI weight & share estimates |
+| Name / Title | Kurban AI | Qurban AI |
+| Subtitle / Short | Fotoğrafla kilo ve hisse hesabı | Livestock weight & share AI |
 | Brand line | Premium AgriTech | Premium AgriTech |
 
 ---
@@ -134,18 +134,18 @@ Birincil: Lifestyle / Productivity
 ### English (en-US)
 
 **Name** (30)  
-`Kurban AI`
+`Qurban AI`
 
 **Subtitle** (30)  
-`AI weight & share estimates`
+`Livestock weight & share AI`
 
 **Promotional Text** (170)  
-`Snap a livestock photo for AI weight, carcass and share estimates. Manual calculator and market price references included.`
+`Snap a livestock / Qurban animal photo for AI live weight, carcass and share estimates. Manual calculator and market references included.`
 
 **Description**
 
 ```
-Kurban AI helps you estimate livestock live weight and share cost quickly.
+Qurban AI helps you estimate livestock and Qurban animal live weight and share cost quickly.
 
 AI PHOTO ANALYSIS
 • Camera or gallery (up to 4 photos)
@@ -169,21 +169,21 @@ ACCOUNT & CREDITS
 DISCLAIMER
 Results are estimates only. Professional weighing and veterinary checks are recommended.
 
-Kurban AI — Akin Tech Studio
+Qurban AI — Akin Tech Studio
 ```
 
 **Keywords** (100)
 
 ```
-livestock,weight,carcass,share,cattle,sheep,ai,farm,agriculture,calculator
+qurban,livestock,weight,carcass,share,cattle,sheep,ai,farm,agriculture
 ```
 
 **What's New** (v1.0.0)
 
 ```
-Welcome to Kurban AI!
+Welcome to Qurban AI!
 
-• AI photo weight & share analysis
+• AI photo weight & share analysis for livestock / Qurban animals
 • Manual carcass / share calculator
 • Market price references
 • Credit packs and analysis history
@@ -224,10 +224,10 @@ veya `mailto:mehmet.erdem.akin@outlook.com`
 ### English
 
 **Title**  
-`Kurban AI`
+`Qurban AI`
 
 **Short description** (80)  
-`AI livestock weight & share estimates. Manual calc + market refs.`
+`AI livestock / Qurban weight & share. Manual calc + market refs.`
 
 **Full description** — App Store Description (English) ile aynı.
 
@@ -254,7 +254,7 @@ Kaynak uygulama ikonu: `../assets/images/icon.png`
 
 | # | Kaynak | Türkçe caption | English caption |
 |---|--------|----------------|-----------------|
-| 1 | `home` | Fotoğrafla kilo ve hisse | AI weight & share from a photo |
+| 1 | `home` | Fotoğrafla kilo ve hisse | Livestock / Qurban weight from a photo |
 | 2 | `analyze` | Kamera veya galeri ile AI analiz | Analyze with camera or gallery |
 | 3 | `calculator` | Anlık karkas ve 1/7 hisse | Instant carcass & share cost |
 | 4 | `pricing` | Kredi paketleri | Credit packs |
