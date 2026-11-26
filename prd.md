@@ -41,3 +41,4 @@ Bu depo, [kurban-ai](https://github.com/Mehmet-Erdem-Akin/kurban-ai) web uygulam
 - Backend imzalı oturum + Bearer `getCurrentUser` ile mobil uyumu (login/register `token`)
 - Analyze `RATE_LIMITED` hata mesajı desteği
 - Store lokalizasyon politikası: TR `Kurban AI` (Türkiye) + EN `Qurban AI` (yurtdışı)
+- Bundle / package ID: `com.akintechstudio.kurbanai`
