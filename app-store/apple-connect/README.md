@@ -9,7 +9,7 @@ App Store Connect’e **doğrudan yüklenebilir** boyutlar.
 | App Icon | **1024 × 1024** PNG (alpha yok) | `icon/AppIcon-1024.png` |
 | iPhone 6.1" screenshots | **1179 × 2556** | `screenshots/ui-iphone-6.1/` |
 | iPhone 6.3" screenshots | **1206 × 2622** | `screenshots/ui-iphone-6.3/` |
-| iPhone 6.7" screenshots | **1290 × 2796** | `screenshots/ui-iphone-6.7/` |
+| iPhone 6.7" screenshots | **1290 × 2796** (hazır set bu boyutta) | `screenshots/ui-iphone-6.7/` |
 | iPhone 6.9" screenshots | **1320 × 2868** | `screenshots/ui-iphone-6.9/` |
 
 > Tablet desteklenmiyor (`supportsTablet: false`) → iPad screenshot gerekmez.
