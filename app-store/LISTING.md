@@ -7,10 +7,41 @@ Görseller: `app-store/assets/` · Connect boyutları: `app-store/apple-connect/
 
 ---
 
+## Lokalizasyon politikası
+
+| Hedef | Store dili | App Name | Subtitle / Short |
+|-------|------------|----------|------------------|
+| Türkiye | Türkçe (Primary) | `Kurban AI` | `Fotoğrafla kilo ve hisse hesabı` |
+| Yurtdışı / diğer ülkeler | English (U.S.) | `Kurban AI` | `AI weight & share estimates` |
+
+**Kurallar**
+- Primary language = **Turkish** (Türkiye App Store’da TR listing görünür)
+- English localization eklenince diğer ülkelerde EN listing görünür
+- Bundle ID tek kalır: `com.akintechstudio.kurbanlikkilo`
+- Cihaz ikon altı adı (`app.json` → `name`) tek: **Kurban AI** (store listing adı ülkeden bağımsız da aynı markayı korur)
+- Uygulama içi UI şu an Türkçe; store lokalizasyonu ≠ in-app i18n
+
+### App Store Connect — nasıl eklenir
+
+1. My Apps → Kurban AI → **App Store** sekmesi  
+2. Primary Language: **Turkish**  
+3. **Localizations** → **+** → **English (U.S.)**  
+4. TR alanlarını aşağıdaki Türkçe bloktan yapıştır  
+5. EN alanlarını aşağıdaki English bloktan yapıştır  
+6. Her lokalizasyona screenshot yükle (aynı set kullanılabilir; caption diline göre)
+
+### Google Play Console — nasıl eklenir
+
+1. Store presence → **Main store listing** → dil **Türkçe**  
+2. **Manage translations** → **English (United States)** ekle  
+3. Title / short / full description’ı aşağıdaki TR ve EN bloklardan yapıştır
+
+---
+
 ## Hızlı kopyala-yapıştır özeti
 
-| Alan | Türkçe | English |
-|------|--------|---------|
+| Alan | Türkçe (TR) | English (abroad) |
+|------|-------------|------------------|
 | Name / Title | Kurban AI | Kurban AI |
 | Subtitle / Short | Fotoğrafla kilo ve hisse hesabı | AI weight & share estimates |
 | Brand line | Premium AgriTech | Premium AgriTech |
@@ -257,9 +288,11 @@ Tam metin: [`APP_REVIEW_NOTES.md`](./APP_REVIEW_NOTES.md)
 ## 7. Checklist — yüklemeden önce
 
 - [ ] Icon 1024×1024 (`apple-connect/icon/AppIcon-1024.png`)
+- [ ] ASC Primary Language = Turkish
 - [ ] TR description + subtitle + keywords
-- [ ] EN localization
-- [ ] Screenshots (en az 3, ideal 5–8) ASC boyutunda
+- [ ] EN (U.S.) localization eklendi (yurtdışı)
+- [ ] Play Store TR + EN store listing
+- [ ] Screenshots (en az 3, ideal 5–8) ASC boyutunda — TR ve EN lokalizasyonlarına
 - [ ] Play Feature Graphic 1024×500
 - [ ] Privacy Policy URL canlı
 - [ ] Demo hesap / review notları
